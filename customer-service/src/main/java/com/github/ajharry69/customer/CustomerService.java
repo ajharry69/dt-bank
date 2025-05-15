@@ -4,6 +4,7 @@ import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.models.Customer;
 import com.github.ajharry69.customer.models.CustomerRequest;
 import com.github.ajharry69.customer.models.CustomerResponse;
+import com.github.ajharry69.customer.models.mappers.CustomerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,58 +16,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class CustomerService {
+    private final CustomerMapper mapper;
     private final CustomerRepository repository;
 
     public Page<CustomerResponse> getCustomers(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(customer -> CustomerResponse.builder()
-                        .id(customer.getId())
-                        .firstName(customer.getFirstName())
-                        .lastName(customer.getLastName())
-                        .build());
+                .map(mapper::toResponse);
     }
 
     @Transactional
-    public CustomerResponse createCustomer(CustomerRequest customer) {
-        Customer entity = Customer.builder()
-                .firstName(customer.firstName())
-                .lastName(customer.lastName())
-                .build();
-        Customer savedCustomer = repository.save(entity);
-        return CustomerResponse.builder()
-                .id(savedCustomer.getId())
-                .firstName(savedCustomer.getFirstName())
-                .lastName(savedCustomer.getLastName())
-                .build();
+    public CustomerResponse createCustomer(CustomerRequest request) {
+        Customer entity = mapper.toEntity(request);
+        Customer customer = repository.save(entity);
+        return mapper.toResponse(customer);
     }
 
     public CustomerResponse getCustomer(UUID customerId) {
         Customer customer = repository.findById(customerId)
                 .orElseThrow(CustomerNotFoundException::new);
 
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
-                .build();
+        return mapper.toResponse(customer);
     }
 
     @Transactional
-    public CustomerResponse updateCustomer(UUID customerId, CustomerRequest customer) {
+    public CustomerResponse updateCustomer(UUID customerId, CustomerRequest request) {
         if (!repository.existsById(customerId)) {
             throw new CustomerNotFoundException();
         }
 
-        Customer entity = Customer.builder()
-                .firstName(customer.firstName())
-                .lastName(customer.lastName())
-                .build();
-        Customer saveCustomer = repository.save(entity);
-        return CustomerResponse.builder()
-                .id(saveCustomer.getId())
-                .firstName(saveCustomer.getFirstName())
-                .lastName(saveCustomer.getLastName())
-                .build();
+        Customer entity = mapper.toEntity(request);
+        Customer customer = repository.save(entity);
+        return mapper.toResponse(customer);
     }
 
     @Transactional

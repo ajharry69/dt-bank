@@ -4,9 +4,11 @@ import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.models.Customer;
 import com.github.ajharry69.customer.models.CustomerRequest;
 import com.github.ajharry69.customer.models.CustomerResponse;
+import com.github.ajharry69.customer.models.mappers.CustomerMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceTest {
+    private final CustomerMapper mapper = Mappers.getMapper(CustomerMapper.class);
 
     @Nested
     class GetCustomers {
@@ -33,7 +36,7 @@ class CustomerServiceTest {
             final var repository = mock(CustomerRepository.class);
             when(repository.findAll(any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             var actual = service.getCustomers(Pageable.unpaged());
@@ -52,7 +55,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findAll(any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Customer.builder().build())));
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             var actual = service.getCustomers(Pageable.unpaged());
@@ -75,7 +78,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             assertThatThrownBy(() -> service.getCustomer(UUID.randomUUID()))
@@ -88,7 +91,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.of(Customer.builder().build()));
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             CustomerResponse customer = service.getCustomer(UUID.randomUUID());
@@ -107,7 +110,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             assertAll(
@@ -123,7 +126,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(true);
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             UUID customerId = UUID.randomUUID();
@@ -147,7 +150,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             assertAll(
@@ -170,7 +173,7 @@ class CustomerServiceTest {
                     .thenReturn(true);
             when(repository.save(any()))
                     .thenReturn(Customer.builder().id(UUID.randomUUID()).build());
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             var actual = service.updateCustomer(
@@ -209,7 +212,7 @@ class CustomerServiceTest {
             var repository = mock(CustomerRepository.class);
             when(repository.save(any()))
                     .thenReturn(Customer.builder().id(UUID.randomUUID()).build());
-            var service = new CustomerService(repository);
+            var service = new CustomerService(mapper, repository);
 
             // When
             var actual = service.createCustomer(
