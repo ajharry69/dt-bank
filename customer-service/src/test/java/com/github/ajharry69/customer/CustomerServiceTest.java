@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class CustomerServiceImplTest {
+class CustomerServiceTest {
 
     @Nested
     class GetCustomers {
@@ -33,7 +33,7 @@ class CustomerServiceImplTest {
             final var repository = mock(CustomerRepository.class);
             when(repository.findAll(any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             var actual = service.getCustomers(Pageable.unpaged());
@@ -52,7 +52,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findAll(any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Customer.builder().build())));
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             var actual = service.getCustomers(Pageable.unpaged());
@@ -75,7 +75,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             assertThatThrownBy(() -> service.getCustomer(UUID.randomUUID()))
@@ -88,7 +88,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.of(Customer.builder().build()));
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             CustomerResponse customer = service.getCustomer(UUID.randomUUID());
@@ -107,7 +107,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             assertAll(
@@ -123,7 +123,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(true);
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             UUID customerId = UUID.randomUUID();
@@ -147,7 +147,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             assertAll(
@@ -170,7 +170,7 @@ class CustomerServiceImplTest {
                     .thenReturn(true);
             when(repository.save(any()))
                     .thenReturn(Customer.builder().id(UUID.randomUUID()).build());
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             var actual = service.updateCustomer(
@@ -209,7 +209,7 @@ class CustomerServiceImplTest {
             var repository = mock(CustomerRepository.class);
             when(repository.save(any()))
                     .thenReturn(Customer.builder().id(UUID.randomUUID()).build());
-            var service = new CustomerServiceImpl(repository);
+            var service = new CustomerService(repository);
 
             // When
             var actual = service.createCustomer(
