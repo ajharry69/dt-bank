@@ -192,7 +192,7 @@ class CustomerServiceTest {
 
                         var entity = argumentCaptor.getValue();
                         assertThat(entity.getId())
-                                .isNull();
+                                .isNotNull();
                         assertThat(entity.getFirstName())
                                 .isEqualTo("First");
                         assertThat(entity.getLastName())

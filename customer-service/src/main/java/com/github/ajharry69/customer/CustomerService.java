@@ -45,6 +45,7 @@ public class CustomerService {
         }
 
         Customer entity = mapper.toEntity(request);
+        entity.setId(customerId);
         Customer customer = repository.save(entity);
         return mapper.toResponse(customer);
     }
