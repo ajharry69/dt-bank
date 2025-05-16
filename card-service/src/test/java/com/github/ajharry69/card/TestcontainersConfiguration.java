@@ -23,7 +23,7 @@ class TestcontainersConfiguration {
 	@RestartScope
 	@ServiceConnection
 	RabbitMQContainer rabbitContainer() {
-		return new RabbitMQContainer(DockerImageName.parse("rabbitmq:latest"));
+		return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.1-alpine"));
 	}
 
 	@Bean
