@@ -5,6 +5,7 @@ import com.github.ajharry69.customer.models.CustomerRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import net.datafaker.Faker;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import static org.hamcrest.Matchers.*;
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CustomerControllerTest {
+    private static final Faker faker = new Faker();
     @Autowired
     private CustomerRepository repository;
     private Customer customer;
@@ -42,12 +44,25 @@ class CustomerControllerTest {
         return map;
     }
 
+    private static String firstName() {
+        return faker.name().firstName();
+    }
+
+    private static String lastName() {
+        return faker.name().lastName();
+    }
+
     @BeforeEach
     public void setUp() {
         RestAssured.port = RestAssured.DEFAULT_PORT;
 
         repository.deleteAll();
-        customer = repository.save(Customer.builder().firstName("John").lastName("Doe").build());
+        customer = repository.save(
+                Customer.builder()
+                        .firstName(firstName())
+                        .lastName(lastName())
+                        .build()
+        );
     }
 
     @Nested
@@ -55,12 +70,14 @@ class CustomerControllerTest {
     class CreateCustomer {
         @Test
         void shouldCreateCustomer() {
+            String firstName = firstName();
+            String lastName = lastName();
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
-                                    .firstName("First")
-                                    .lastName("Last").build()
+                                    .firstName(firstName)
+                                    .lastName(lastName).build()
                     )
                     .post("/api/v1/customers");
 
@@ -70,8 +87,8 @@ class CustomerControllerTest {
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
                     .body("id", not(emptyOrNullString()))
-                    .body("firstName", equalTo("First"))
-                    .body("lastName", equalTo("Last"))
+                    .body("firstName", equalTo(firstName))
+                    .body("lastName", equalTo(lastName))
                     .body("otherName", nullValue());
         }
 
@@ -86,7 +103,12 @@ class CustomerControllerTest {
         void shouldReturnBadRequestForInvalidCustomer(String firstName, String lastName) {
             Response response = given()
                     .contentType(ContentType.JSON)
-                    .body(CustomerRequest.builder().firstName(firstName).lastName(lastName).build())
+                    .body(
+                            CustomerRequest.builder()
+                                    .firstName(firstName)
+                                    .lastName(lastName)
+                                    .build()
+                    )
                     .post("/api/v1/customers");
 
             response.prettyPrint();
@@ -102,12 +124,15 @@ class CustomerControllerTest {
     class UpdateCustomer {
         @Test
         void shouldUpdateCustomer() {
+            String firstName = firstName();
+            String lastName = lastName();
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
-                                    .firstName("First")
-                                    .lastName("Last").build()
+                                    .firstName(firstName)
+                                    .lastName(lastName)
+                                    .build()
                     )
                     .put("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
@@ -117,8 +142,8 @@ class CustomerControllerTest {
                     .then()
                     .statusCode(HttpStatus.OK.value())
                     .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(customer.getId()))))
-                    .body("firstName", equalTo("First"))
-                    .body("lastName", equalTo("Last"))
+                    .body("firstName", equalTo(firstName))
+                    .body("lastName", equalTo(lastName))
                     .body("otherName", nullValue());
         }
 
@@ -128,8 +153,9 @@ class CustomerControllerTest {
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
-                                    .firstName("First")
-                                    .lastName("Last").build()
+                                    .firstName(firstName())
+                                    .lastName(lastName())
+                                    .build()
                     )
                     .put("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
 

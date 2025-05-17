@@ -34,17 +34,17 @@ class CustomerServiceTest {
         void shouldReturnEmpty_WhenCustomersAreNotAvailable() {
             // Given
             final var repository = mock(CustomerRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(CustomerSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
             var service = new CustomerService(mapper, repository);
 
             // When
-            var actual = service.getCustomers(Pageable.unpaged());
+            var actual = service.getCustomers(Pageable.unpaged(), CustomerFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(CustomerSpecification.class), any(Pageable.class)),
                     () -> assertIterableEquals(Collections.emptyList(), actual)
             );
         }
@@ -53,17 +53,17 @@ class CustomerServiceTest {
         void shouldReturnNonEmpty_WhenCustomersAreAvailable() {
             // Given
             var repository = mock(CustomerRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(CustomerSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Customer.builder().build())));
             var service = new CustomerService(mapper, repository);
 
             // When
-            var actual = service.getCustomers(Pageable.unpaged());
+            var actual = service.getCustomers(Pageable.unpaged(), CustomerFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(CustomerSpecification.class), any(Pageable.class)),
                     () -> Assertions.assertThat(actual)
                             .isNotEmpty()
             );

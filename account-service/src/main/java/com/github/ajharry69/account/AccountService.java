@@ -19,8 +19,9 @@ public class AccountService {
     private final AccountMapper mapper;
     private final AccountRepository repository;
 
-    public Page<AccountResponse> getAccounts(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<AccountResponse> getAccounts(Pageable pageable, AccountFilter filter) {
+        var specification = new AccountSpecification(filter);
+        return repository.findAll(specification, pageable)
                 .map(mapper::toResponse);
     }
 

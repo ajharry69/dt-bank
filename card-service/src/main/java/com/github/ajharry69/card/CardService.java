@@ -20,8 +20,9 @@ public class CardService {
     private final CardMapper mapper;
     private final CardRepository repository;
 
-    public Page<CardResponse> getCards(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<CardResponse> getCards(Pageable pageable, CardFilter filter) {
+        var specification = new CardSpecification(filter);
+        return repository.findAll(specification, pageable)
                 .map(mapper::toResponse);
     }
 

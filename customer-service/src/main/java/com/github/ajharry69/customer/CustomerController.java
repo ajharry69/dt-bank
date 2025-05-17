@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -24,8 +25,21 @@ class CustomerController {
     private final PagedResourcesAssembler<CustomerResponse> customerPageAssembler;
 
     @GetMapping
-    public PagedModel<EntityModel<CustomerResponse>> getCustomers(Pageable pageable) {
-        Page<CustomerResponse> customers = service.getCustomers(pageable);
+    public PagedModel<EntityModel<CustomerResponse>> getCustomers(
+            @RequestParam(required = false)
+            String name,
+            @RequestParam(required = false)
+            LocalDate startDateCreated,
+            @RequestParam(required = false)
+            LocalDate endDateCreated,
+            Pageable pageable
+    ) {
+        var filter = CustomerFilter.builder()
+                .name(name)
+                .startDateCreated(startDateCreated)
+                .endDateCreated(endDateCreated)
+                .build();
+        Page<CustomerResponse> customers = service.getCustomers(pageable, filter);
         return customerPageAssembler.toModel(
                 customers,
                 new CustomerAssembler()

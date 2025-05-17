@@ -1,6 +1,5 @@
 package com.github.ajharry69.account;
 
-import com.github.ajharry69.account.AccountService;
 import com.github.ajharry69.account.models.AccountRequest;
 import com.github.ajharry69.account.models.AccountResponse;
 import com.github.ajharry69.account.utils.AccountAssembler;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -25,8 +25,24 @@ class AccountController {
     private final PagedResourcesAssembler<AccountResponse> accountPageAssembler;
 
     @GetMapping
-    public PagedModel<EntityModel<AccountResponse>> getAccounts(Pageable pageable) {
-        Page<AccountResponse> accounts = service.getAccounts(pageable);
+    public PagedModel<EntityModel<AccountResponse>> getAccounts(
+            @RequestParam(required = false)
+            String iban,
+            @RequestParam(required = false)
+            String bicSwift,
+            @RequestParam(required = false)
+            LocalDate startDateCreated,
+            @RequestParam(required = false)
+            LocalDate endDateCreated,
+            Pageable pageable
+    ) {
+        var filter = AccountFilter.builder()
+                .iban(iban)
+                .bicSwift(bicSwift)
+                .startDateCreated(startDateCreated)
+                .endDateCreated(endDateCreated)
+                .build();
+        Page<AccountResponse> accounts = service.getAccounts(pageable, filter);
         return accountPageAssembler.toModel(
                 accounts,
                 new AccountAssembler()

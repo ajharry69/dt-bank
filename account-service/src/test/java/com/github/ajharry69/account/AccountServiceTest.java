@@ -34,17 +34,17 @@ class AccountServiceTest {
         void shouldReturnEmpty_WhenAccountsAreNotAvailable() {
             // Given
             final var repository = mock(AccountRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(AccountSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
             var service = new AccountService(mapper, repository);
 
             // When
-            var actual = service.getAccounts(Pageable.unpaged());
+            var actual = service.getAccounts(Pageable.unpaged(), AccountFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(AccountSpecification.class), any(Pageable.class)),
                     () -> assertIterableEquals(Collections.emptyList(), actual)
             );
         }
@@ -53,17 +53,17 @@ class AccountServiceTest {
         void shouldReturnNonEmpty_WhenAccountsAreAvailable() {
             // Given
             var repository = mock(AccountRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(AccountSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Account.builder().build())));
             var service = new AccountService(mapper, repository);
 
             // When
-            var actual = service.getAccounts(Pageable.unpaged());
+            var actual = service.getAccounts(Pageable.unpaged(), AccountFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(AccountSpecification.class), any(Pageable.class)),
                     () -> Assertions.assertThat(actual)
                             .isNotEmpty()
             );

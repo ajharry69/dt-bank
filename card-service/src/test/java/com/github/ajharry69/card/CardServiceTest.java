@@ -35,17 +35,17 @@ class CardServiceTest {
         void shouldReturnEmpty_WhenCardsAreNotAvailable() {
             // Given
             final var repository = mock(CardRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(CardSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
             var service = new CardService(mapper, repository);
 
             // When
-            var actual = service.getCards(Pageable.unpaged());
+            var actual = service.getCards(Pageable.unpaged(), CardFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(CardSpecification.class), any(Pageable.class)),
                     () -> assertIterableEquals(Collections.emptyList(), actual)
             );
         }
@@ -54,17 +54,17 @@ class CardServiceTest {
         void shouldReturnNonEmpty_WhenCardsAreAvailable() {
             // Given
             var repository = mock(CardRepository.class);
-            when(repository.findAll(any(Pageable.class)))
+            when(repository.findAll(any(CardSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Card.builder().build())));
             var service = new CardService(mapper, repository);
 
             // When
-            var actual = service.getCards(Pageable.unpaged());
+            var actual = service.getCards(Pageable.unpaged(), CardFilter.builder().build());
 
             // Then
             assertAll(
                     () -> verify(repository, times(1))
-                            .findAll(any(Pageable.class)),
+                            .findAll(any(CardSpecification.class), any(Pageable.class)),
                     () -> Assertions.assertThat(actual)
                             .isNotEmpty()
             );

@@ -19,8 +19,9 @@ public class CustomerService {
     private final CustomerMapper mapper;
     private final CustomerRepository repository;
 
-    public Page<CustomerResponse> getCustomers(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<CustomerResponse> getCustomers(Pageable pageable, CustomerFilter filter) {
+        var specification = new CustomerSpecification(filter);
+        return repository.findAll(specification, pageable)
                 .map(mapper::toResponse);
     }
 

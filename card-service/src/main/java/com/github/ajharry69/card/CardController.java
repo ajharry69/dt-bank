@@ -2,6 +2,7 @@ package com.github.ajharry69.card;
 
 import com.github.ajharry69.card.models.CardCreateRequest;
 import com.github.ajharry69.card.models.CardResponse;
+import com.github.ajharry69.card.models.CardType;
 import com.github.ajharry69.card.models.CardUpdateRequest;
 import com.github.ajharry69.card.utils.CardAssembler;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -25,8 +27,27 @@ class CardController {
     private final PagedResourcesAssembler<CardResponse> cardPageAssembler;
 
     @GetMapping
-    public PagedModel<EntityModel<CardResponse>> getCards(Pageable pageable) {
-        Page<CardResponse> cards = service.getCards(pageable);
+    public PagedModel<EntityModel<CardResponse>> getCards(
+            @RequestParam(required = false)
+            String alias,
+            @RequestParam(required = false)
+            CardType type,
+            @RequestParam(required = false)
+            String pan,
+            @RequestParam(required = false)
+            LocalDate startDateCreated,
+            @RequestParam(required = false)
+            LocalDate endDateCreated,
+            Pageable pageable
+    ) {
+        var filter = CardFilter.builder()
+                .pan(pan)
+                .type(type)
+                .alias(alias)
+                .startDateCreated(startDateCreated)
+                .endDateCreated(endDateCreated)
+                .build();
+        Page<CardResponse> cards = service.getCards(pageable, filter);
         return cardPageAssembler.toModel(
                 cards,
                 new CardAssembler()
