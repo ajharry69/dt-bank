@@ -1,6 +1,7 @@
 package com.github.ajharry69.card;
 
 import com.github.ajharry69.card.exceptions.CardNotFoundException;
+import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;
 import com.github.ajharry69.card.models.CardCreateRequest;
 import com.github.ajharry69.card.models.CardResponse;
@@ -208,9 +209,28 @@ class CardServiceTest {
     @Nested
     class CreateCard {
         @Test
+        void shouldThrowErrorCardTypeAlreadyExistsException() {
+            // Given
+            var repository = mock(CardRepository.class);
+            when(repository.existsByAccountIdAndType(any(), any()))
+                    .thenReturn(true);
+            var service = new CardService(mapper, repository);
+
+            // When
+            assertThatThrownBy(() -> service.createCard(
+                    CardCreateRequest.builder()
+                            .alias("First")
+                            .pan("Last")
+                            .build()
+            )).isInstanceOf(CardTypeAlreadyExistsException.class);
+        }
+
+        @Test
         void shouldReturnCard_WhenCardsIsNotAvailable() {
             // Given
             var repository = mock(CardRepository.class);
+            when(repository.existsByAccountIdAndType(any(), any()))
+                    .thenReturn(false);
             when(repository.save(any()))
                     .thenReturn(Card.builder().id(UUID.randomUUID()).build());
             var service = new CardService(mapper, repository);

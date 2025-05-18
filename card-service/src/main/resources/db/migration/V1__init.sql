@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS cards
     type               VARCHAR(20) NOT NULL,
     date_created       TIMESTAMP WITH TIME ZONE,
     date_last_modified TIMESTAMP WITH TIME ZONE,
-    account_id         UUID        NOT NULL
+    account_id         UUID        NOT NULL,
+    UNIQUE (account_id, type) -- database constraint will act as a last resort if code enforcement fails
 );
 
 CREATE INDEX IF NOT EXISTS idx_cards_account_id ON cards (account_id);

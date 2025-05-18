@@ -1,6 +1,7 @@
 package com.github.ajharry69.card;
 
 import com.github.ajharry69.card.exceptions.CardNotFoundException;
+import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;
 import com.github.ajharry69.card.models.CardCreateRequest;
 import com.github.ajharry69.card.models.CardResponse;
@@ -34,6 +35,10 @@ public class CardService {
     @Transactional
     public CardResponse createCard(CardCreateRequest request) {
         log.info("Creating card: {}", request);
+        if (repository.existsByAccountIdAndType(request.accountId(), request.type())) {
+            log.error("Card type {} already exists for account with ID {}.", request.type(), request.accountId());
+            throw new CardTypeAlreadyExistsException();
+        }
         Card entity = mapper.toEntity(request);
         Card card = repository.save(entity);
         CardResponse response = mapper.toResponse(card);
