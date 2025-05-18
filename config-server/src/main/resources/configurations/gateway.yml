@@ -1,0 +1,23 @@
+eureka:
+  client:
+    register-with-eureka: false
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      mvc:
+        routes:
+          - id: customer-service
+            uri: lb://CUSTOMER-SERVICE
+            predicates:
+              - Path=/api/v1/customers**
+          - id: account-service
+            uri: lb://ACCOUNT-SERVICE
+            predicates:
+              - Path=/api/v1/accounts**
+          - id: card-service
+            uri: lb://CARD-SERVICE
+            predicates:
+              - Path=/api/v1/cards**
