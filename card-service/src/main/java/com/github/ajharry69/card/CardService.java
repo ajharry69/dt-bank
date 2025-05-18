@@ -7,6 +7,7 @@ import com.github.ajharry69.card.models.CardResponse;
 import com.github.ajharry69.card.models.CardUpdateRequest;
 import com.github.ajharry69.card.models.mappers.CardMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CardService {
@@ -21,27 +23,37 @@ public class CardService {
     private final CardRepository repository;
 
     public Page<CardResponse> getCards(Pageable pageable, CardFilter filter) {
+        log.info("Getting cards with filter: {}...", filter);
         var specification = new CardSpecification(filter);
-        return repository.findAll(specification, pageable)
+        Page<CardResponse> page = repository.findAll(specification, pageable)
                 .map(mapper::toResponse);
+        log.info("Found {} cards with filter: {}", page.getNumberOfElements(), filter);
+        return page;
     }
 
     @Transactional
     public CardResponse createCard(CardCreateRequest request) {
+        log.info("Creating card: {}", request);
         Card entity = mapper.toEntity(request);
         Card card = repository.save(entity);
-        return mapper.toResponse(card);
+        CardResponse response = mapper.toResponse(card);
+        log.info("Created card: {}", response);
+        return response;
     }
 
     public CardResponse getCard(UUID cardId) {
+        log.info("Getting card with id: {}", cardId);
         Card card = repository.findById(cardId)
                 .orElseThrow(CardNotFoundException::new);
 
-        return mapper.toResponse(card);
+        CardResponse response = mapper.toResponse(card);
+        log.info("Found card: {}", response);
+        return response;
     }
 
     @Transactional
     public CardResponse updateCard(UUID cardId, CardUpdateRequest request) {
+        log.info("Updating card with id: {} with request: {}", cardId, request);
         var entity = repository.findById(cardId)
                 .orElseThrow(CardNotFoundException::new);
         entity.setAlias(request.alias());
@@ -49,15 +61,24 @@ public class CardService {
         entity.setCvv(request.cvv());
 
         Card card = repository.save(entity);
-        return mapper.toResponse(card);
+        CardResponse response = mapper.toResponse(card);
+        log.info("Updated card: {}", response);
+        return response;
     }
 
     @Transactional
     public void deleteCard(UUID cardId) {
-        if (!repository.existsById(cardId)) {
-            throw new CardNotFoundException();
-        }
+        log.info("Deleting card with id: {}", cardId);
+        checkExistsByIdOrThrow(cardId);
 
         repository.deleteById(cardId);
+        log.info("Deleted card with id: {}", cardId);
+    }
+
+    private void checkExistsByIdOrThrow(UUID cardId) {
+        if (!repository.existsById(cardId)) {
+            log.info("Card with id: {} not found", cardId);
+            throw new CardNotFoundException();
+        }
     }
 }
