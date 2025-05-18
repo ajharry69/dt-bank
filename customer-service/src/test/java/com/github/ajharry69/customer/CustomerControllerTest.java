@@ -12,17 +12,26 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -57,6 +66,12 @@ class CustomerControllerTest {
         RestAssured.port = RestAssured.DEFAULT_PORT;
 
         repository.deleteAll();
+        repository.save(
+                Customer.builder()
+                        .firstName("John")
+                        .lastName("Doe")
+                        .build()
+        );
         customer = repository.save(
                 Customer.builder()
                         .firstName(firstName())
@@ -256,10 +271,99 @@ class CustomerControllerTest {
     @Nested
     @DisplayName(value = "GET - /api/v1/customers")
     class GetCustomers {
-        @Test
-        void shouldReturnCustomers() {
+        static Stream<Arguments> shouldReturnCustomers() {
+            return Stream.of(
+                    arguments(
+                            CustomerFilter.builder()
+                                    .build(),
+                            5
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name("John")
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name("joHn")
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name(faker.name().name())
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .startDateCreated(LocalDate.now().minusYears(3))
+                                    .build(),
+                            4
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .endDateCreated(LocalDate.now().minusYears(4).plusDays(1))
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .startDateCreated(LocalDate.now().minusYears(4))
+                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
+                                    .build(),
+                            3
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name("JohN")
+                                    .startDateCreated(LocalDate.now().minusYears(4))
+                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
+                                    .build(),
+                            0
+                    )
+            );
+        }
+
+        private static @NotNull Map<String, Object> queryParams(CustomerFilter filter) {
+            Map<String, Object> map = new HashMap<>();
+            if (filter == null) {
+                return map;
+            }
+
+            if (filter.name() != null) {
+                map.put("name", filter.name());
+            }
+            if (filter.startDateCreated() != null) {
+                map.put("startDateCreated", filter.startDateCreated().format(DateTimeFormatter.ISO_DATE));
+            }
+            if (filter.endDateCreated() != null) {
+                map.put("endDateCreated", filter.endDateCreated().format(DateTimeFormatter.ISO_DATE));
+            }
+            return map;
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void shouldReturnCustomers(CustomerFilter filter, int expectedTotalElements) {
+            List.of(
+                    OffsetDateTime.now().minusYears(4),
+                    OffsetDateTime.now().minusYears(3),
+                    OffsetDateTime.now().minusYears(2)
+            ).forEach(dateTime -> {
+                var customer = repository.save(
+                        Customer.builder()
+                                .firstName(firstName())
+                                .lastName(lastName())
+                                .build()
+                );
+                repository.updateDateCreatedById(dateTime, customer.getId());
+            });
+
             Response response = given()
                     .when()
+                    .queryParams(queryParams(filter))
                     .get("/api/v1/customers");
 
             response.prettyPrint();
@@ -267,7 +371,7 @@ class CustomerControllerTest {
             response
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", equalTo(1));
+                    .body("page.totalElements", equalTo(expectedTotalElements));
         }
     }
 }

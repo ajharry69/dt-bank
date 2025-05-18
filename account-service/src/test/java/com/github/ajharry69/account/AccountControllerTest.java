@@ -12,22 +12,33 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class AccountControllerTest {
     private static final Faker faker = new Faker();
+    private static final String iban = iban();
+    private static final String bicSwift = bicSwift();
     @Autowired
     private AccountRepository repository;
     private Account account;
@@ -44,15 +55,30 @@ class AccountControllerTest {
         return map;
     }
 
+    private static String iban() {
+        return faker.finance().iban();
+    }
+
+    private static String bicSwift() {
+        return faker.finance().bic();
+    }
+
     @BeforeEach
     public void setUp() {
         RestAssured.port = RestAssured.DEFAULT_PORT;
 
         repository.deleteAll();
+        repository.save(
+                Account.builder()
+                        .iban(iban)
+                        .bicSwift(bicSwift)
+                        .customerId(UUID.randomUUID())
+                        .build()
+        );
         account = repository.save(
                 Account.builder()
-                        .iban(faker.finance().iban())
-                        .bicSwift(faker.finance().bic())
+                        .iban(iban())
+                        .bicSwift(bicSwift())
                         .customerId(UUID.randomUUID())
                         .build()
         );
@@ -63,8 +89,8 @@ class AccountControllerTest {
     class CreateAccount {
         @Test
         void shouldCreateAccount() {
-            String iban = faker.finance().iban();
-            String bicSwift = faker.finance().bic();
+            String iban = iban();
+            String bicSwift = bicSwift();
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
@@ -120,8 +146,8 @@ class AccountControllerTest {
     class UpdateAccount {
         @Test
         void shouldUpdateAccount() {
-            String iban = faker.finance().iban();
-            String bicSwift = faker.finance().bic();
+            String iban = iban();
+            String bicSwift = bicSwift();
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
@@ -150,8 +176,8 @@ class AccountControllerTest {
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
-                                    .iban(faker.finance().iban())
-                                    .bicSwift(faker.finance().bic())
+                                    .iban(iban())
+                                    .bicSwift(bicSwift())
                                     .customerId(UUID.randomUUID())
                                     .build()
                     )
@@ -260,10 +286,111 @@ class AccountControllerTest {
     @Nested
     @DisplayName(value = "GET - /api/v1/accounts")
     class GetAccounts {
-        @Test
-        void shouldReturnAccounts() {
+        static Stream<Arguments> shouldReturnAccounts() {
+            return Stream.of(
+                    arguments(
+                            AccountFilter.builder()
+                                    .build(),
+                            5
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .iban(iban)
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .bicSwift(bicSwift)
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .iban(faker.funnyName().name())
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .startDateCreated(LocalDate.now().minusYears(3))
+                                    .build(),
+                            4
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .endDateCreated(LocalDate.now().minusYears(4).plusDays(1))
+                                    .build(),
+                            1
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .startDateCreated(LocalDate.now().minusYears(4))
+                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
+                                    .build(),
+                            3
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .iban(iban)
+                                    .startDateCreated(LocalDate.now().minusYears(4))
+                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            AccountFilter.builder()
+                                    .bicSwift(bicSwift)
+                                    .startDateCreated(LocalDate.now().minusYears(4))
+                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
+                                    .build(),
+                            0
+                    )
+            );
+        }
+
+        private static @NotNull Map<String, Object> queryParams(AccountFilter filter) {
+            Map<String, Object> map = new HashMap<>();
+            if (filter == null) {
+                return map;
+            }
+
+            if (filter.iban() != null) {
+                map.put("iban", filter.iban());
+            }
+            if (filter.bicSwift() != null) {
+                map.put("bicSwift", filter.bicSwift());
+            }
+            if (filter.startDateCreated() != null) {
+                map.put("startDateCreated", filter.startDateCreated().format(DateTimeFormatter.ISO_DATE));
+            }
+            if (filter.endDateCreated() != null) {
+                map.put("endDateCreated", filter.endDateCreated().format(DateTimeFormatter.ISO_DATE));
+            }
+            return map;
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void shouldReturnAccounts(AccountFilter filter, int expectedTotalElements) {
+            List.of(
+                    OffsetDateTime.now().minusYears(4),
+                    OffsetDateTime.now().minusYears(3),
+                    OffsetDateTime.now().minusYears(2)
+            ).forEach(dateTime -> {
+                var account = repository.save(
+                        Account.builder()
+                                .iban(iban())
+                                .bicSwift(bicSwift())
+                                .customerId(UUID.randomUUID())
+                                .build()
+                );
+                repository.updateDateCreatedById(dateTime, account.getId());
+            });
+
             Response response = given()
                     .when()
+                    .queryParams(queryParams(filter))
                     .get("/api/v1/accounts");
 
             response.prettyPrint();
@@ -271,7 +398,7 @@ class AccountControllerTest {
             response
                     .then()
                     .statusCode(HttpStatus.OK.value())
-                    .body("page.totalElements", equalTo(1));
+                    .body("page.totalElements", equalTo(expectedTotalElements));
         }
     }
 }
