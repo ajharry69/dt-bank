@@ -30,17 +30,17 @@ Each microservice is a Spring Boot application built with Maven.
 ### Customer Service (`customer-service`)
 
 * **Description:** Handles CRUD operations for customer's biographical data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8090/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
 
 ### Account Service (`account-service`)
 
 * **Description:** Manages customer bank account data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8110/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
 
 ### Card Service (`card-service`)
 
 * **Description:** Manages customer card data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8100/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
 
 ---
 
@@ -131,19 +131,7 @@ the gateway.
 
 API documentation is generated using Springdoc OpenAPI.
 
-### Individual Microservice API Documentation
-
-Each microservice also exposes its own Swagger UI and OpenAPI specification directly:
-
-* **Customer Service:**
-    * UI: http://localhost:8090/swagger-ui.html
-    * Spec: http://localhost:8090/v3/api-docs
-* **Account Service:**
-    * UI: http://localhost:8110/swagger-ui.html
-    * Spec: http://localhost:8110/v3/api-docs
-* **Card Service:**
-    * UI: http://localhost:8100/swagger-ui.html
-    * Spec: http://localhost:8100/v3/api-docs
+* OpenAPI UI: http://localhost:8080/swagger-ui.html
 
 ---
 

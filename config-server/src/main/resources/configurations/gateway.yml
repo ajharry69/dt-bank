@@ -12,12 +12,30 @@ spring:
           - id: customer-service
             uri: lb://CUSTOMER-SERVICE
             predicates:
-              - Path=/api/v1/customers**
+              - Path=/api/v1/customers**, /api/v1/customers/**, /customer-service/v3/api-docs
+
           - id: account-service
             uri: lb://ACCOUNT-SERVICE
             predicates:
-              - Path=/api/v1/accounts**
+              - Path=/api/v1/accounts**, /api/v1/accounts/**, /account-service/v3/api-docs
+
           - id: card-service
             uri: lb://CARD-SERVICE
             predicates:
-              - Path=/api/v1/cards**
+              - Path=/api/v1/cards**, /api/v1/cards/**, /card-service/v3/api-docs
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: Customers
+        url: /customer-service/v3/api-docs
+      - name: Accounts
+        url: /account-service/v3/api-docs
+      - name: Cards
+        url: /card-service/v3/api-docs

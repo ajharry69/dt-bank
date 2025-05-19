@@ -1,2 +1,7 @@
 server:
   port: 8110
+springdoc:
+  api-docs:
+    path: /account-service/v3/api-docs
+  swagger-ui:
+    path: /account-service/swagger-ui.html
