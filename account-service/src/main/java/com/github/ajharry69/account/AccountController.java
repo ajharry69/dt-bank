@@ -57,6 +57,8 @@ class AccountController {
     )
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
             @RequestParam(required = false)
+            UUID customerId,
+            @RequestParam(required = false)
             String iban,
             @RequestParam(required = false)
             String bicSwift,
@@ -67,6 +69,7 @@ class AccountController {
             Pageable pageable
     ) {
         var filter = AccountFilter.builder()
+                .customerId(customerId)
                 .iban(iban)
                 .bicSwift(bicSwift)
                 .startDateCreated(startDateCreated)

@@ -1,4 +1,4 @@
-package com.github.ajharry69.account;
+package com.github.ajharry69.customer.service.account;
 
 import lombok.Builder;
 

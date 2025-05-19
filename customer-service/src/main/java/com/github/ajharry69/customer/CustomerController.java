@@ -1,7 +1,10 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.models.CreateAccountRequest;
 import com.github.ajharry69.customer.models.CustomerRequest;
 import com.github.ajharry69.customer.models.CustomerResponse;
+import com.github.ajharry69.customer.service.account.AccountFilter;
+import com.github.ajharry69.customer.service.account.dtos.AccountResponse;
 import com.github.ajharry69.customer.utils.CustomerAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -31,7 +34,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/customers")
 @Tag(name = "Customers", description = "Operations related to customers")
-class CustomerController {
+public class CustomerController {
     private final CustomerService service;
     private final PagedResourcesAssembler<CustomerResponse> customerPageAssembler;
 
@@ -241,4 +244,86 @@ class CustomerController {
         service.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping(value = "/{customerId}/accounts", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Create account for customer")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Successful creation",
+                            headers = {
+                                    @Header(name = "Location")
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request payload",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    )
+            }
+    )
+    public ResponseEntity<EntityModel<AccountResponse>> createAccount(
+            @PathVariable UUID customerId,
+            @RequestBody @Valid CreateAccountRequest request) {
+        EntityModel<AccountResponse> model = service.createAccount(customerId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(model);
+    }
+
+    @GetMapping(value = "/{customerId}/accounts", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get accounts for customer")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful retrieval."
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    )
+            }
+    )
+    public PagedModel<EntityModel<AccountResponse>> getAccounts(
+            @PathVariable UUID customerId,
+            @RequestParam(required = false)
+            String iban,
+            @RequestParam(required = false)
+            String bicSwift,
+            @RequestParam(required = false)
+            LocalDate startDateCreated,
+            @RequestParam(required = false)
+            LocalDate endDateCreated,
+            Pageable pageable) {
+        var filter = AccountFilter.builder()
+                .customerId(customerId)
+                .iban(iban)
+                .bicSwift(bicSwift)
+                .startDateCreated(startDateCreated)
+                .endDateCreated(endDateCreated)
+                .build();
+        return service.getAccounts(filter, pageable);
+    }
+
 }
