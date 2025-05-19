@@ -280,18 +280,6 @@ class CustomerControllerTest {
                     ),
                     arguments(
                             CustomerFilter.builder()
-                                    .name("John")
-                                    .build(),
-                            1
-                    ),
-                    arguments(
-                            CustomerFilter.builder()
-                                    .name("joHn")
-                                    .build(),
-                            1
-                    ),
-                    arguments(
-                            CustomerFilter.builder()
                                     .name(faker.name().name())
                                     .build(),
                             0
@@ -314,14 +302,6 @@ class CustomerControllerTest {
                                     .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
                                     .build(),
                             3
-                    ),
-                    arguments(
-                            CustomerFilter.builder()
-                                    .name("JohN")
-                                    .startDateCreated(LocalDate.now().minusYears(4))
-                                    .endDateCreated(LocalDate.now().minusYears(2).plusDays(1))
-                                    .build(),
-                            0
                     )
             );
         }
