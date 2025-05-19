@@ -4,13 +4,15 @@ import com.github.ajharry69.card.exceptions.CardNotFoundException;
 import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;
 import com.github.ajharry69.card.models.CardCreateRequest;
-import com.github.ajharry69.card.models.CardResponse;
 import com.github.ajharry69.card.models.CardUpdateRequest;
 import com.github.ajharry69.card.models.mappers.CardMapper;
+import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.PageImpl;
@@ -29,10 +31,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CardServiceTest {
+    private static final Faker faker = new Faker();
     private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
     private final CardRepository repository = mock(CardRepository.class);
 
     private CardService service;
+
+    private static String pan() {
+        return faker.finance().creditCard()
+                .replaceAll("\\D", "");
+    }
+
+    private static String cvv() {
+        return faker.expression("#{numerify '###'}");
+    }
 
     @BeforeEach
     public void setUp() {
@@ -79,29 +91,54 @@ class CardServiceTest {
 
     @Nested
     class GetCard {
-        @Test
-        void shouldThrowCardNotFoundException_IfCardIsNotAvailable() {
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void shouldThrowCardNotFoundException_IfCardIsNotAvailable(boolean unmask) {
             // Given
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
 
             // When
-            assertThatThrownBy(() -> service.getCard(UUID.randomUUID()))
+            assertThatThrownBy(() -> service.getCard(UUID.randomUUID(), unmask))
                     .isInstanceOf(CardNotFoundException.class);
         }
 
-        @Test
-        void shouldReturnCard_IfCardIsAvailable() {
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void shouldReturnCard_IfCardIsAvailable(boolean unmask) {
             // Given
+            var card = Card.builder()
+                    .pan(pan())
+                    .cvv(cvv())
+                    .build();
             when(repository.findById(any()))
-                    .thenReturn(Optional.of(Card.builder().build()));
+                    .thenReturn(Optional.of(card));
 
             // When
-            CardResponse card = service.getCard(UUID.randomUUID());
+            var actual = service.getCard(UUID.randomUUID(), unmask);
 
             // Then
-            assertThat(card)
-                    .isNotNull();
+            if (unmask) {
+                assertAll(
+                        () -> assertThat(actual)
+                                .isNotNull(),
+                        () -> assertThat(actual.cvv())
+                                .isEqualTo(card.getCvv()),
+                        () -> assertThat(actual.pan())
+                                .isEqualTo(card.getPan())
+
+                );
+            } else {
+                assertAll(
+                        () -> assertThat(actual)
+                                .isNotNull(),
+                        () -> assertThat(actual.cvv())
+                                .isEqualTo("***"),
+                        () -> assertThat(actual.pan())
+                                .isEqualTo("*************")
+
+                );
+            }
         }
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,8 +27,14 @@ public class CardService {
     public Page<CardResponse> getCards(Pageable pageable, CardFilter filter) {
         log.info("Getting cards with filter: {}...", filter);
         var specification = new CardSpecification(filter);
+        Function<Card, CardResponse> toResponse;
+        if (filter.unmask()) {
+            toResponse = mapper::toUnmaskedResponse;
+        } else {
+            toResponse = mapper::toResponse;
+        }
         Page<CardResponse> page = repository.findAll(specification, pageable)
-                .map(mapper::toResponse);
+                .map(toResponse);
         log.info("Found {} cards with filter: {}", page.getNumberOfElements(), filter);
         return page;
     }
@@ -46,12 +53,17 @@ public class CardService {
         return response;
     }
 
-    public CardResponse getCard(UUID cardId) {
+    public CardResponse getCard(UUID cardId, boolean unmask) {
         log.info("Getting card with id: {}", cardId);
         Card card = repository.findById(cardId)
                 .orElseThrow(CardNotFoundException::new);
 
-        CardResponse response = mapper.toResponse(card);
+        CardResponse response;
+        if (unmask) {
+            response = mapper.toUnmaskedResponse(card);
+        } else {
+            response = mapper.toResponse(card);
+        }
         log.info("Found card: {}", response);
         return response;
     }

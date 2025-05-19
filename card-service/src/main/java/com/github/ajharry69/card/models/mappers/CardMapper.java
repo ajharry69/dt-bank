@@ -17,5 +17,9 @@ public interface CardMapper {
     @Mapping(target = "id", ignore = true)
     Card toEntity(CardCreateRequest request);
 
+    @Mapping(target = "pan", expression = "java(\"*************\")")
+    @Mapping(target = "cvv", expression = "java(\"***\")")
     CardResponse toResponse(Card card);
+
+    CardResponse toUnmaskedResponse(Card card);
 }

@@ -17,6 +17,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -126,8 +127,8 @@ class CardControllerTest {
                     .statusCode(HttpStatus.CREATED.value())
                     .body("id", not(emptyOrNullString()))
                     .body("alias", equalTo(alias))
-                    .body("pan", equalTo(pan))
-                    .body("cvv", equalTo(cvv))
+                    .body("pan", equalTo("*************"))
+                    .body("cvv", equalTo("***"))
                     .body("type", equalTo(type.name()))
                     .body("accountId", notNullValue());
         }
@@ -188,8 +189,8 @@ class CardControllerTest {
                     .statusCode(HttpStatus.OK.value())
                     .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(card.getId()))))
                     .body("alias", equalTo(alias))
-                    .body("pan", equalTo(pan))
-                    .body("cvv", equalTo(cvv))
+                    .body("pan", equalTo("*************"))
+                    .body("cvv", equalTo("***"))
                     .body("type", equalTo(card.getType().name()))
                     .body("accountId", notNullValue());
         }
@@ -245,8 +246,9 @@ class CardControllerTest {
     @Nested
     @DisplayName(value = "GET - /api/v1/cards/{cardId}")
     class GetCard {
-        @Test
-        void shouldReturnCard() {
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void shouldReturnCard(boolean unmask) {
             Response response = given()
                     .when()
                     .get("/api/v1/cards/{cardId}", validCardDetailRequest());
@@ -258,8 +260,8 @@ class CardControllerTest {
                     .statusCode(HttpStatus.OK.value())
                     .body("id", equalTo(String.valueOf(card.getId())))
                     .body("alias", equalTo(card.getAlias()))
-                    .body("pan", equalTo(card.getPan()))
-                    .body("cvv", equalTo(card.getCvv()))
+                    .body("pan", equalTo("*************"))
+                    .body("cvv", equalTo("***"))
                     .body("type", equalTo(card.getType().name()))
                     .body("accountId", equalTo(card.getAccountId().toString()));
         }
@@ -321,6 +323,12 @@ class CardControllerTest {
                     ),
                     arguments(
                             CardFilter.builder()
+                                    .unmask(true)
+                                    .build(),
+                            5
+                    ),
+                    arguments(
+                            CardFilter.builder()
                                     .alias("John")
                                     .build(),
                             1
@@ -373,6 +381,7 @@ class CardControllerTest {
                 return map;
             }
 
+            map.put("unmask", filter.unmask());
             if (filter.pan() != null) {
                 map.put("pan", filter.pan());
             }

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 @Builder
 public record CardFilter(
+        boolean unmask,
         String pan,
         String alias,
         CardType type,

@@ -68,9 +68,12 @@ class CardController {
             LocalDate startDateCreated,
             @RequestParam(required = false)
             LocalDate endDateCreated,
+            @RequestParam(required = false, defaultValue = "false")
+            boolean unmask,
             Pageable pageable
     ) {
         var filter = CardFilter.builder()
+                .unmask(unmask)
                 .pan(pan)
                 .type(type)
                 .alias(alias)
@@ -156,8 +159,11 @@ class CardController {
     )
     public ResponseEntity<EntityModel<CardResponse>> getCard(
             @PathVariable
-            UUID cardId) {
-        CardResponse response = service.getCard(cardId);
+            UUID cardId,
+            @RequestParam(required = false, defaultValue = "false")
+            boolean unmask
+    ) {
+        CardResponse response = service.getCard(cardId, unmask);
         CardAssembler assembler = new CardAssembler();
         EntityModel<CardResponse> model = assembler.toModel(response);
         return ResponseEntity.ok(model);
