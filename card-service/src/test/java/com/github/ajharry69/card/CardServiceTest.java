@@ -8,6 +8,7 @@ import com.github.ajharry69.card.models.CardResponse;
 import com.github.ajharry69.card.models.CardUpdateRequest;
 import com.github.ajharry69.card.models.mappers.CardMapper;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -28,17 +29,23 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class CardServiceTest {
-    private final CardMapper mapper = Mappers.getMapper(CardMapper.class);
+    private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
+    private final CardRepository repository = mock(CardRepository.class);
+
+    private CardService service;
+
+    @BeforeEach
+    public void setUp() {
+        service = new CardService(cardMapper, repository);
+    }
 
     @Nested
     class GetCards {
         @Test
         void shouldReturnEmpty_WhenCardsAreNotAvailable() {
             // Given
-            final var repository = mock(CardRepository.class);
             when(repository.findAll(any(CardSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
-            var service = new CardService(mapper, repository);
 
             // When
             var actual = service.getCards(Pageable.unpaged(), CardFilter.builder().build());
@@ -54,10 +61,8 @@ class CardServiceTest {
         @Test
         void shouldReturnNonEmpty_WhenCardsAreAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.findAll(any(CardSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Card.builder().build())));
-            var service = new CardService(mapper, repository);
 
             // When
             var actual = service.getCards(Pageable.unpaged(), CardFilter.builder().build());
@@ -77,10 +82,8 @@ class CardServiceTest {
         @Test
         void shouldThrowCardNotFoundException_IfCardIsNotAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
-            var service = new CardService(mapper, repository);
 
             // When
             assertThatThrownBy(() -> service.getCard(UUID.randomUUID()))
@@ -90,10 +93,8 @@ class CardServiceTest {
         @Test
         void shouldReturnCard_IfCardIsAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.of(Card.builder().build()));
-            var service = new CardService(mapper, repository);
 
             // When
             CardResponse card = service.getCard(UUID.randomUUID());
@@ -109,10 +110,8 @@ class CardServiceTest {
         @Test
         void shouldThrowCardNotFoundException_IfCardIsNotAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new CardService(mapper, repository);
 
             // When
             assertAll(
@@ -125,10 +124,8 @@ class CardServiceTest {
         @Test
         void shouldDelete_IfCardIsAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(true);
-            var service = new CardService(mapper, repository);
 
             // When
             UUID cardId = UUID.randomUUID();
@@ -149,10 +146,8 @@ class CardServiceTest {
         @Test
         void shouldThrowCardNotFoundException_IfCardIsNotAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
-            var service = new CardService(mapper, repository);
 
             // When
             assertAll(
@@ -170,12 +165,10 @@ class CardServiceTest {
         @Test
         void shouldReturnCard_WhenCardsIsAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.of(Card.builder().id(UUID.randomUUID()).build()));
             when(repository.save(any()))
                     .thenReturn(Card.builder().id(UUID.randomUUID()).build());
-            var service = new CardService(mapper, repository);
 
             // When
             var actual = service.updateCard(
@@ -211,10 +204,8 @@ class CardServiceTest {
         @Test
         void shouldThrowErrorCardTypeAlreadyExistsException() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.existsByAccountIdAndType(any(), any()))
                     .thenReturn(true);
-            var service = new CardService(mapper, repository);
 
             // When
             assertThatThrownBy(() -> service.createCard(
@@ -228,12 +219,10 @@ class CardServiceTest {
         @Test
         void shouldReturnCard_WhenCardsIsNotAvailable() {
             // Given
-            var repository = mock(CardRepository.class);
             when(repository.existsByAccountIdAndType(any(), any()))
                     .thenReturn(false);
             when(repository.save(any()))
                     .thenReturn(Card.builder().id(UUID.randomUUID()).build());
-            var service = new CardService(mapper, repository);
 
             // When
             var actual = service.createCard(

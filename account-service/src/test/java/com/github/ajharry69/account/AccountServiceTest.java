@@ -6,6 +6,7 @@ import com.github.ajharry69.account.models.AccountRequest;
 import com.github.ajharry69.account.models.AccountResponse;
 import com.github.ajharry69.account.models.mappers.AccountMapper;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -26,17 +27,23 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class AccountServiceTest {
-    private final AccountMapper mapper = Mappers.getMapper(AccountMapper.class);
+    private final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
+    private final AccountRepository repository = mock(AccountRepository.class);
+
+    private AccountService service;
+
+    @BeforeEach
+    public void setUp() {
+        service = new AccountService(accountMapper, repository);
+    }
 
     @Nested
     class GetAccounts {
         @Test
         void shouldReturnEmpty_WhenAccountsAreNotAvailable() {
             // Given
-            final var repository = mock(AccountRepository.class);
             when(repository.findAll(any(AccountSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(Collections.emptyList()));
-            var service = new AccountService(mapper, repository);
 
             // When
             var actual = service.getAccounts(Pageable.unpaged(), AccountFilter.builder().build());
@@ -52,10 +59,8 @@ class AccountServiceTest {
         @Test
         void shouldReturnNonEmpty_WhenAccountsAreAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.findAll(any(AccountSpecification.class), any(Pageable.class)))
                     .thenReturn(new PageImpl<>(List.of(Account.builder().build())));
-            var service = new AccountService(mapper, repository);
 
             // When
             var actual = service.getAccounts(Pageable.unpaged(), AccountFilter.builder().build());
@@ -75,10 +80,8 @@ class AccountServiceTest {
         @Test
         void shouldThrowAccountNotFoundException_IfAccountIsNotAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.empty());
-            var service = new AccountService(mapper, repository);
 
             // When
             assertThatThrownBy(() -> service.getAccount(UUID.randomUUID()))
@@ -88,10 +91,8 @@ class AccountServiceTest {
         @Test
         void shouldReturnAccount_IfAccountIsAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.findById(any()))
                     .thenReturn(Optional.of(Account.builder().build()));
-            var service = new AccountService(mapper, repository);
 
             // When
             AccountResponse account = service.getAccount(UUID.randomUUID());
@@ -107,10 +108,8 @@ class AccountServiceTest {
         @Test
         void shouldThrowAccountNotFoundException_IfAccountIsNotAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new AccountService(mapper, repository);
 
             // When
             assertAll(
@@ -123,10 +122,8 @@ class AccountServiceTest {
         @Test
         void shouldDelete_IfAccountIsAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(true);
-            var service = new AccountService(mapper, repository);
 
             // When
             UUID accountId = UUID.randomUUID();
@@ -147,10 +144,8 @@ class AccountServiceTest {
         @Test
         void shouldThrowAccountNotFoundException_IfAccountIsNotAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(false);
-            var service = new AccountService(mapper, repository);
 
             // When
             assertAll(
@@ -168,12 +163,10 @@ class AccountServiceTest {
         @Test
         void shouldReturnAccount_WhenAccountsIsAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.existsById(any()))
                     .thenReturn(true);
             when(repository.save(any()))
                     .thenReturn(Account.builder().id(UUID.randomUUID()).build());
-            var service = new AccountService(mapper, repository);
 
             // When
             var actual = service.updateAccount(
@@ -209,10 +202,8 @@ class AccountServiceTest {
         @Test
         void shouldReturnAccount_WhenAccountsIsNotAvailable() {
             // Given
-            var repository = mock(AccountRepository.class);
             when(repository.save(any()))
                     .thenReturn(Account.builder().id(UUID.randomUUID()).build());
-            var service = new AccountService(mapper, repository);
 
             // When
             var actual = service.createAccount(
