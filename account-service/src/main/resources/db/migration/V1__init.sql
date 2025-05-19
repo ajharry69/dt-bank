@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS accounts
     bic_swift          VARCHAR(40) NOT NULL,
     date_created       TIMESTAMP WITH TIME ZONE,
     date_last_modified TIMESTAMP WITH TIME ZONE,
-    customer_id        UUID        NOT NULL
+    customer_id        UUID        NOT NULL,
+    UNIQUE (iban, bic_swift, customer_id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_accounts_customer_id ON accounts (customer_id);
