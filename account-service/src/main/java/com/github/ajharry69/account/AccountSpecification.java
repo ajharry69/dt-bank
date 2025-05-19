@@ -19,6 +19,9 @@ public class AccountSpecification implements Specification<Account> {
     public Predicate toPredicate(Root<Account> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
+        if (filter.customerId() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("customerId"), filter.customerId()));
+        }
         if (filter.iban() != null) {
             predicates.add(criteriaBuilder.equal(root.get("iban"), filter.iban().trim()));
         }

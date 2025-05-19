@@ -2,6 +2,10 @@ package com.github.ajharry69.account;
 
 import com.github.ajharry69.account.models.AccountRequest;
 import com.github.ajharry69.account.models.AccountResponse;
+import com.github.ajharry69.account.models.CardType;
+import com.github.ajharry69.account.models.CreateCardRequest;
+import com.github.ajharry69.account.service.card.CardFilter;
+import com.github.ajharry69.account.service.card.dtos.CardResponse;
 import com.github.ajharry69.account.utils.AccountAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -246,5 +250,92 @@ class AccountController {
             UUID accountId) {
         service.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(value = "/{accountId}/cards", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Create card for account")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Successful creation",
+                            headers = {
+                                    @Header(name = "Location")
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request payload",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    )
+            }
+    )
+    public ResponseEntity<EntityModel<CardResponse>> createCard(
+            @PathVariable UUID accountId,
+            @RequestBody @Valid CreateCardRequest request) {
+        EntityModel<CardResponse> model = service.createCard(accountId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(model);
+    }
+
+    @GetMapping(value = "/{accountId}/cards", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Get cards for account")
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successful retrieval."
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(
+                                            mediaType = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE,
+                                            schema = @Schema(implementation = Problem.class)
+                                    )
+                            }
+                    )
+            }
+    )
+    public PagedModel<EntityModel<CardResponse>> getCards(
+            @PathVariable UUID accountId,
+            @RequestParam(required = false)
+            String alias,
+            @RequestParam(required = false)
+            CardType type,
+            @RequestParam(required = false)
+            String pan,
+            @RequestParam(required = false)
+            LocalDate startDateCreated,
+            @RequestParam(required = false)
+            LocalDate endDateCreated,
+            @RequestParam(required = false, defaultValue = "false")
+            boolean unmask,
+            Pageable pageable) {
+        var filter = CardFilter.builder()
+                .accountId(accountId)
+                .unmask(unmask)
+                .pan(pan)
+                .type(type)
+                .alias(alias)
+                .startDateCreated(startDateCreated)
+                .endDateCreated(endDateCreated)
+                .build();
+        return service.getCards(filter, pageable);
     }
 }

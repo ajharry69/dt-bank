@@ -1,4 +1,4 @@
-package com.github.ajharry69.card.utils.constraints;
+package com.github.ajharry69.account.utils.constraints;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

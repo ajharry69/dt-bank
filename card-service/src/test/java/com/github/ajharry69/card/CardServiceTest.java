@@ -3,8 +3,8 @@ package com.github.ajharry69.card;
 import com.github.ajharry69.card.exceptions.CardNotFoundException;
 import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;
-import com.github.ajharry69.card.models.CardCreateRequest;
-import com.github.ajharry69.card.models.CardUpdateRequest;
+import com.github.ajharry69.card.models.CreateCardRequest;
+import com.github.ajharry69.card.models.UpdateCardRequest;
 import com.github.ajharry69.card.models.mappers.CardMapper;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
@@ -38,8 +38,7 @@ class CardServiceTest {
     private CardService service;
 
     private static String pan() {
-        return faker.finance().creditCard()
-                .replaceAll("\\D", "");
+        return faker.finance().creditCard();
     }
 
     private static String cvv() {
@@ -190,7 +189,7 @@ class CardServiceTest {
             assertAll(
                     () -> verify(repository, never()).save(any()),
                     () -> assertThatThrownBy(() -> {
-                        CardUpdateRequest card = CardUpdateRequest.builder()
+                        UpdateCardRequest card = UpdateCardRequest.builder()
                                 .alias("First")
                                 .pan("Last")
                                 .build();
@@ -210,7 +209,7 @@ class CardServiceTest {
             // When
             var actual = service.updateCard(
                     UUID.randomUUID(),
-                    CardUpdateRequest.builder()
+                    UpdateCardRequest.builder()
                             .alias("First")
                             .pan("Last")
                             .build()
@@ -246,7 +245,7 @@ class CardServiceTest {
 
             // When
             assertThatThrownBy(() -> service.createCard(
-                    CardCreateRequest.builder()
+                    CreateCardRequest.builder()
                             .alias("First")
                             .pan("Last")
                             .build()
@@ -263,7 +262,7 @@ class CardServiceTest {
 
             // When
             var actual = service.createCard(
-                    CardCreateRequest.builder()
+                    CreateCardRequest.builder()
                             .alias("First")
                             .pan("Last")
                             .build()

@@ -1,6 +1,6 @@
-package com.github.ajharry69.card;
+package com.github.ajharry69.account.service.card;
 
-import com.github.ajharry69.card.models.CardType;
+import com.github.ajharry69.account.models.CardType;
 import lombok.Builder;
 
 import java.time.LocalDate;

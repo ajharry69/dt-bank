@@ -3,9 +3,9 @@ package com.github.ajharry69.card;
 import com.github.ajharry69.card.exceptions.CardNotFoundException;
 import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;
-import com.github.ajharry69.card.models.CardCreateRequest;
+import com.github.ajharry69.card.models.CreateCardRequest;
 import com.github.ajharry69.card.models.CardResponse;
-import com.github.ajharry69.card.models.CardUpdateRequest;
+import com.github.ajharry69.card.models.UpdateCardRequest;
 import com.github.ajharry69.card.models.mappers.CardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponse createCard(CardCreateRequest request) {
+    public CardResponse createCard(CreateCardRequest request) {
         log.info("Creating card: {}", request);
         if (repository.existsByAccountIdAndType(request.accountId(), request.type())) {
             log.error("Card type {} already exists for account with ID {}.", request.type(), request.accountId());
@@ -69,7 +69,7 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponse updateCard(UUID cardId, CardUpdateRequest request) {
+    public CardResponse updateCard(UUID cardId, UpdateCardRequest request) {
         log.info("Updating card with id: {} with request: {}", cardId, request);
         var entity = repository.findById(cardId)
                 .orElseThrow(CardNotFoundException::new);

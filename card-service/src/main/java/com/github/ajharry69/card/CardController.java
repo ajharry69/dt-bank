@@ -1,9 +1,9 @@
 package com.github.ajharry69.card;
 
-import com.github.ajharry69.card.models.CardCreateRequest;
 import com.github.ajharry69.card.models.CardResponse;
 import com.github.ajharry69.card.models.CardType;
-import com.github.ajharry69.card.models.CardUpdateRequest;
+import com.github.ajharry69.card.models.CreateCardRequest;
+import com.github.ajharry69.card.models.UpdateCardRequest;
 import com.github.ajharry69.card.utils.CardAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -59,6 +59,8 @@ class CardController {
     )
     public PagedModel<EntityModel<CardResponse>> getCards(
             @RequestParam(required = false)
+            UUID accountId,
+            @RequestParam(required = false)
             String alias,
             @RequestParam(required = false)
             CardType type,
@@ -73,6 +75,7 @@ class CardController {
             Pageable pageable
     ) {
         var filter = CardFilter.builder()
+                .accountId(accountId)
                 .unmask(unmask)
                 .pan(pan)
                 .type(type)
@@ -120,7 +123,7 @@ class CardController {
                     )
             }
     )
-    public ResponseEntity<EntityModel<CardResponse>> createCard(@RequestBody @Valid CardCreateRequest card) {
+    public ResponseEntity<EntityModel<CardResponse>> createCard(@RequestBody @Valid CreateCardRequest card) {
         CardResponse response = service.createCard(card);
         CardAssembler assembler = new CardAssembler();
         EntityModel<CardResponse> model = assembler.toModel(response);
@@ -212,7 +215,7 @@ class CardController {
     public ResponseEntity<EntityModel<CardResponse>> updateCard(
             @PathVariable
             UUID cardId,
-            @RequestBody @Valid CardUpdateRequest card) {
+            @RequestBody @Valid UpdateCardRequest card) {
         CardResponse response = service.updateCard(cardId, card);
         CardAssembler assembler = new CardAssembler();
         EntityModel<CardResponse> model = assembler.toModel(response);

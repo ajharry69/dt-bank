@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record CardUpdateRequest(
+public record UpdateCardRequest(
         @NotNull
         String alias,
         @Pan

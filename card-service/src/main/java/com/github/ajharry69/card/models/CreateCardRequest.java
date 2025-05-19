@@ -9,7 +9,7 @@ import lombok.Builder;
 import java.util.UUID;
 
 @Builder
-public record CardCreateRequest(
+public record CreateCardRequest(
         @NotNull
         String alias,
         @Pan

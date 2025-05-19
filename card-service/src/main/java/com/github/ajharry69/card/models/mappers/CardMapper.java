@@ -1,7 +1,7 @@
 package com.github.ajharry69.card.models.mappers;
 
 import com.github.ajharry69.card.models.Card;
-import com.github.ajharry69.card.models.CardCreateRequest;
+import com.github.ajharry69.card.models.CreateCardRequest;
 import com.github.ajharry69.card.models.CardResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +15,7 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface CardMapper {
     @Mapping(target = "id", ignore = true)
-    Card toEntity(CardCreateRequest request);
+    Card toEntity(CreateCardRequest request);
 
     @Mapping(target = "pan", expression = "java(\"*************\")")
     @Mapping(target = "cvv", expression = "java(\"***\")")

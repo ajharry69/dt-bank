@@ -19,6 +19,9 @@ public class CardSpecification implements Specification<Card> {
     public Predicate toPredicate(Root<Card> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
+        if (filter.accountId() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("accountId"), filter.accountId()));
+        }
         if (filter.alias() != null) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("alias")), "%" + filter.alias().trim().toLowerCase() + "%"));
         }

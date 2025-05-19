@@ -1,9 +1,9 @@
 package com.github.ajharry69.card;
 
 import com.github.ajharry69.card.models.Card;
-import com.github.ajharry69.card.models.CardCreateRequest;
 import com.github.ajharry69.card.models.CardType;
-import com.github.ajharry69.card.models.CardUpdateRequest;
+import com.github.ajharry69.card.models.CreateCardRequest;
+import com.github.ajharry69.card.models.UpdateCardRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -49,15 +49,14 @@ class CardControllerTest {
     }
 
     private static String pan() {
-        return faker.finance().creditCard()
-                .replaceAll("\\D", "");
+        return faker.finance().creditCard();
     }
 
     private static String cvv() {
         return faker.expression("#{numerify '###'}");
     }
 
-    private static CardType cardType() {
+    private static CardType type() {
         return faker.options().option(CardType.class);
     }
 
@@ -83,7 +82,7 @@ class CardControllerTest {
                         .alias("John Doe")
                         .pan(pan())
                         .cvv(cvv())
-                        .type(cardType())
+                        .type(type())
                         .accountId(UUID.randomUUID())
                         .build()
         );
@@ -92,7 +91,7 @@ class CardControllerTest {
                         .alias(alias())
                         .pan(pan())
                         .cvv(cvv())
-                        .type(cardType())
+                        .type(type())
                         .accountId(UUID.randomUUID())
                         .build()
         );
@@ -106,11 +105,11 @@ class CardControllerTest {
             String alias = alias();
             String pan = pan();
             String cvv = cvv();
-            CardType type = cardType();
+            CardType type = type();
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
-                            CardCreateRequest.builder()
+                            CreateCardRequest.builder()
                                     .alias(alias)
                                     .pan(pan)
                                     .cvv(cvv)
@@ -145,11 +144,11 @@ class CardControllerTest {
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
-                            CardCreateRequest.builder()
+                            CreateCardRequest.builder()
                                     .alias(alias)
                                     .pan(pan)
                                     .cvv(cvv())
-                                    .type(cardType())
+                                    .type(type())
                                     .accountId(UUID.randomUUID())
                                     .build()
                     )
@@ -174,7 +173,7 @@ class CardControllerTest {
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
-                            CardUpdateRequest.builder()
+                            UpdateCardRequest.builder()
                                     .alias(alias)
                                     .pan(pan)
                                     .cvv(cvv)
@@ -200,7 +199,7 @@ class CardControllerTest {
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
-                            CardUpdateRequest.builder()
+                            UpdateCardRequest.builder()
                                     .alias(alias())
                                     .pan(pan())
                                     .cvv(cvv())
@@ -227,7 +226,7 @@ class CardControllerTest {
             Response response = given()
                     .contentType(ContentType.JSON)
                     .body(
-                            CardUpdateRequest.builder()
+                            UpdateCardRequest.builder()
                                     .alias(alias)
                                     .pan(pan)
                                     .cvv(cvv())
@@ -413,7 +412,7 @@ class CardControllerTest {
                                 .alias(alias())
                                 .pan(pan())
                                 .cvv(cvv())
-                                .type(cardType())
+                                .type(type())
                                 .accountId(UUID.randomUUID())
                                 .build()
                 );
