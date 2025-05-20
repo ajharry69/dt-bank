@@ -34,7 +34,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
 class CustomerControllerTest {
     private static final Faker faker = new Faker();
     @Autowired
@@ -281,6 +281,30 @@ class CustomerControllerTest {
                     arguments(
                             CustomerFilter.builder()
                                     .name(faker.name().name())
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name(faker.name().name().toLowerCase())
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name(faker.name().name().replaceAll("\\s+", " OR "))
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name(faker.name().name().replaceAll("\\s+", " OR ").toUpperCase())
+                                    .build(),
+                            0
+                    ),
+                    arguments(
+                            CustomerFilter.builder()
+                                    .name("\"" + faker.name().name() + "\"")
                                     .build(),
                             0
                     ),
