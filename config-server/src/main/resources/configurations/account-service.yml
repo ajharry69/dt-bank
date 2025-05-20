@@ -1,6 +1,11 @@
 server:
   port: 8110
+spring:
+  threads:
+    virtual:
+      enabled: true
 springdoc:
+  paths-to-match: /api/**
   api-docs:
     path: /account-service/v3/api-docs
   swagger-ui:
