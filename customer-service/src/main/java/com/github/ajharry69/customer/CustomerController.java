@@ -1,5 +1,6 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.data.CustomerFilter;
 import com.github.ajharry69.customer.models.CreateAccountRequest;
 import com.github.ajharry69.customer.models.CustomerRequest;
 import com.github.ajharry69.customer.models.CustomerResponse;

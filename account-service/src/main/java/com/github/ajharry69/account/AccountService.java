@@ -1,5 +1,8 @@
 package com.github.ajharry69.account;
 
+import com.github.ajharry69.account.data.AccountFilter;
+import com.github.ajharry69.account.data.AccountRepository;
+import com.github.ajharry69.account.data.AccountSpecification;
 import com.github.ajharry69.account.exceptions.AccountNotFoundException;
 import com.github.ajharry69.account.models.Account;
 import com.github.ajharry69.account.models.AccountRequest;
@@ -10,6 +13,8 @@ import com.github.ajharry69.account.models.mappers.CardMapper;
 import com.github.ajharry69.account.service.card.CardClient;
 import com.github.ajharry69.account.service.card.CardFilter;
 import com.github.ajharry69.account.service.card.dtos.CardResponse;
+import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
+import com.github.ajharry69.account.service.messaging.account.AccountDeletedEvent;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +35,7 @@ public class AccountService {
     private final CardMapper cardMapper;
     private final AccountRepository repository;
     private final CardClient cardClient;
+    private final AccountMessagingService accountMessagingService;
 
     public Page<AccountResponse> getAccounts(Pageable pageable, AccountFilter filter) {
         log.info("Getting accounts with filter: {}...", filter);
@@ -79,6 +85,7 @@ public class AccountService {
         checkExistsByIdOrThrow(accountId);
 
         repository.deleteById(accountId);
+        accountMessagingService.sendAccountDeletedEvent(new AccountDeletedEvent(accountId));
         log.info("Deleted account with id: {}", accountId);
     }
 

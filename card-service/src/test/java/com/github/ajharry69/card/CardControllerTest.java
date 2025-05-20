@@ -1,5 +1,7 @@
 package com.github.ajharry69.card;
 
+import com.github.ajharry69.card.data.CardFilter;
+import com.github.ajharry69.card.data.CardRepository;
 import com.github.ajharry69.card.models.Card;
 import com.github.ajharry69.card.models.CardType;
 import com.github.ajharry69.card.models.CreateCardRequest;
@@ -36,7 +38,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@Import(TestcontainersConfiguration.class)
+@Import({TestcontainersConfiguration.class, OptionalTestcontainersConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
 class CardControllerTest {
     private static final Faker faker = new Faker();

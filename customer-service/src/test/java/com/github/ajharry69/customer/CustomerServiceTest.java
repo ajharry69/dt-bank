@@ -1,5 +1,8 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.data.CustomerFilter;
+import com.github.ajharry69.customer.data.CustomerRepository;
+import com.github.ajharry69.customer.data.CustomerSpecification;
 import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.models.CreateAccountRequest;
 import com.github.ajharry69.customer.models.Customer;
@@ -9,6 +12,8 @@ import com.github.ajharry69.customer.models.mappers.AccountMapper;
 import com.github.ajharry69.customer.models.mappers.CustomerMapper;
 import com.github.ajharry69.customer.service.account.AccountClient;
 import com.github.ajharry69.customer.service.account.AccountFilter;
+import com.github.ajharry69.customer.service.messaging.customer.CustomerMessagingService;
+import com.github.ajharry69.customer.service.messaging.customer.CustomerDeletedEvent;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,12 +41,13 @@ class CustomerServiceTest {
     private final AccountMapper accountMapper = Mappers.getMapper(AccountMapper.class);
     private final CustomerRepository repository = mock(CustomerRepository.class);
     private final AccountClient accountClient = mock(AccountClient.class);
+    private final CustomerMessagingService customerMessagingService = mock(CustomerMessagingService.class);
 
     private CustomerService service;
 
     @BeforeEach
     public void setUp() {
-        service = new CustomerService(customerMapper, accountMapper, repository, accountClient);
+        service = new CustomerService(customerMapper, accountMapper, repository, accountClient, customerMessagingService);
     }
 
     @Nested
@@ -138,10 +144,18 @@ class CustomerServiceTest {
 
             // Then
             var argumentCaptor = ArgumentCaptor.forClass(UUID.class);
-            verify(repository, times(1)).deleteById(argumentCaptor.capture());
+            verify(repository, times(1))
+                    .deleteById(argumentCaptor.capture());
 
             var id = argumentCaptor.getValue();
             assertThat(id)
+                    .isEqualTo(customerId);
+
+            var customerDeletedEventArgumentCaptor = ArgumentCaptor.forClass(CustomerDeletedEvent.class);
+            verify(customerMessagingService, times(1))
+                    .sendCustomerDeletedEvent(customerDeletedEventArgumentCaptor.capture());
+
+            assertThat( customerDeletedEventArgumentCaptor.getValue().customerId())
                     .isEqualTo(customerId);
         }
     }

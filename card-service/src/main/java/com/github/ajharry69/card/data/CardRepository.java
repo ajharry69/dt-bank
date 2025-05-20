@@ -1,4 +1,4 @@
-package com.github.ajharry69.card;
+package com.github.ajharry69.card.data;
 
 import com.github.ajharry69.card.models.Card;
 import com.github.ajharry69.card.models.CardType;
@@ -20,4 +20,6 @@ public interface CardRepository extends JpaRepository<Card, UUID>, JpaSpecificat
     void updateDateCreatedById(@Param("dateCreated") OffsetDateTime dateCreated, @Param("id") UUID id);
 
     boolean existsByAccountIdAndType(UUID accountId, CardType type);
+
+    List<CardID> findByAccountId(UUID accountId);
 }

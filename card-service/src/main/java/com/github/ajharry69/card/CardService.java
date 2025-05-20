@@ -1,5 +1,8 @@
 package com.github.ajharry69.card;
 
+import com.github.ajharry69.card.data.CardFilter;
+import com.github.ajharry69.card.data.CardRepository;
+import com.github.ajharry69.card.data.CardSpecification;
 import com.github.ajharry69.card.exceptions.CardNotFoundException;
 import com.github.ajharry69.card.exceptions.CardTypeAlreadyExistsException;
 import com.github.ajharry69.card.models.Card;

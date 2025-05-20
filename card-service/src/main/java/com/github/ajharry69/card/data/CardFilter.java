@@ -1,4 +1,4 @@
-package com.github.ajharry69.card;
+package com.github.ajharry69.card.data;
 
 import com.github.ajharry69.card.models.CardType;
 import lombok.Builder;

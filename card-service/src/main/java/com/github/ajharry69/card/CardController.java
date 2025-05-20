@@ -1,5 +1,6 @@
 package com.github.ajharry69.card;
 
+import com.github.ajharry69.card.data.CardFilter;
 import com.github.ajharry69.card.models.CardResponse;
 import com.github.ajharry69.card.models.CardType;
 import com.github.ajharry69.card.models.CreateCardRequest;

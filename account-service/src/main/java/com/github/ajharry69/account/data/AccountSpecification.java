@@ -1,4 +1,4 @@
-package com.github.ajharry69.account;
+package com.github.ajharry69.account.data;
 
 import com.github.ajharry69.account.models.Account;
 import jakarta.persistence.criteria.CriteriaBuilder;

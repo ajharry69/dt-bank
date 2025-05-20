@@ -1,5 +1,6 @@
 package com.github.ajharry69.account;
 
+import com.github.ajharry69.account.data.AccountFilter;
 import com.github.ajharry69.account.models.AccountRequest;
 import com.github.ajharry69.account.models.AccountResponse;
 import com.github.ajharry69.account.models.CardType;

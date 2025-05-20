@@ -1,5 +1,7 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.data.CustomerFilter;
+import com.github.ajharry69.customer.data.CustomerRepository;
 import com.github.ajharry69.customer.models.Customer;
 import com.github.ajharry69.customer.models.CustomerRequest;
 import io.restassured.RestAssured;
@@ -33,7 +35,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@Import(TestcontainersConfiguration.class)
+@Import({TestcontainersConfiguration.class, OptionalTestcontainersConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
 class CustomerControllerTest {
     private static final Faker faker = new Faker();

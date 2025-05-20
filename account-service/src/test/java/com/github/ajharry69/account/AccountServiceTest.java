@@ -1,11 +1,16 @@
 package com.github.ajharry69.account;
 
+import com.github.ajharry69.account.data.AccountFilter;
+import com.github.ajharry69.account.data.AccountRepository;
+import com.github.ajharry69.account.data.AccountSpecification;
 import com.github.ajharry69.account.exceptions.AccountNotFoundException;
 import com.github.ajharry69.account.models.*;
 import com.github.ajharry69.account.models.mappers.AccountMapper;
 import com.github.ajharry69.account.models.mappers.CardMapper;
 import com.github.ajharry69.account.service.card.CardClient;
 import com.github.ajharry69.account.service.card.CardFilter;
+import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
+import com.github.ajharry69.account.service.messaging.account.AccountDeletedEvent;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +38,7 @@ class AccountServiceTest {
     private final CardMapper cardMapper = Mappers.getMapper(CardMapper.class);
     private final AccountRepository repository = mock(AccountRepository.class);
     private final CardClient cardClient = mock(CardClient.class);
+    private final AccountMessagingService accountMessagingService = mock(AccountMessagingService.class);
 
     private AccountService service;
 
@@ -54,7 +60,7 @@ class AccountServiceTest {
 
     @BeforeEach
     public void setUp() {
-        service = new AccountService(accountMapper, cardMapper, repository, cardClient);
+        service = new AccountService(accountMapper, cardMapper, repository, cardClient, accountMessagingService);
     }
 
     @Nested
@@ -151,10 +157,18 @@ class AccountServiceTest {
 
             // Then
             var argumentCaptor = ArgumentCaptor.forClass(UUID.class);
-            verify(repository, times(1)).deleteById(argumentCaptor.capture());
+            verify(repository, times(1))
+                    .deleteById(argumentCaptor.capture());
 
             var id = argumentCaptor.getValue();
             assertThat(id)
+                    .isEqualTo(accountId);
+
+            var accountDeletedEventArgumentCaptor = ArgumentCaptor.forClass(AccountDeletedEvent.class);
+            verify(accountMessagingService, times(1))
+                    .sendAccountDeletedEvent(accountDeletedEventArgumentCaptor.capture());
+
+            assertThat( accountDeletedEventArgumentCaptor.getValue().accountId())
                     .isEqualTo(accountId);
         }
     }

@@ -1,5 +1,7 @@
 package com.github.ajharry69.account;
 
+import com.github.ajharry69.account.data.AccountFilter;
+import com.github.ajharry69.account.data.AccountRepository;
 import com.github.ajharry69.account.models.Account;
 import com.github.ajharry69.account.models.AccountRequest;
 import io.restassured.RestAssured;
@@ -33,7 +35,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@Import(TestcontainersConfiguration.class)
+@Import({TestcontainersConfiguration.class, OptionalTestcontainersConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
 class AccountControllerTest {
     private static final Faker faker = new Faker();

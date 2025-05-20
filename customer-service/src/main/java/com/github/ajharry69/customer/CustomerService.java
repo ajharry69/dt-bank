@@ -1,5 +1,8 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.data.CustomerFilter;
+import com.github.ajharry69.customer.data.CustomerRepository;
+import com.github.ajharry69.customer.data.CustomerSpecification;
 import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.models.CreateAccountRequest;
 import com.github.ajharry69.customer.models.Customer;
@@ -10,6 +13,8 @@ import com.github.ajharry69.customer.models.mappers.CustomerMapper;
 import com.github.ajharry69.customer.service.account.AccountClient;
 import com.github.ajharry69.customer.service.account.AccountFilter;
 import com.github.ajharry69.customer.service.account.dtos.AccountResponse;
+import com.github.ajharry69.customer.service.messaging.customer.CustomerMessagingService;
+import com.github.ajharry69.customer.service.messaging.customer.CustomerDeletedEvent;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +35,7 @@ public class CustomerService {
     private final AccountMapper accountMapper;
     private final CustomerRepository repository;
     private final AccountClient accountClient;
+    private final CustomerMessagingService customerMessagingService;
 
     public Page<CustomerResponse> getCustomers(Pageable pageable, CustomerFilter filter) {
         log.info("Getting customers with filter: {}...", filter);
@@ -79,6 +85,7 @@ public class CustomerService {
         checkExistsByIdOrThrow(customerId);
 
         repository.deleteById(customerId);
+        customerMessagingService.sendCustomerDeletedEvent(new CustomerDeletedEvent(customerId));
         log.info("Deleted customer with id: {}", customerId);
     }
 

@@ -1,1 +1,3 @@
 *.zip
+*compose.*.yml
+*compose.*.yaml

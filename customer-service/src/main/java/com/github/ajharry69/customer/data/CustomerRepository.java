@@ -1,4 +1,4 @@
-package com.github.ajharry69.customer;
+package com.github.ajharry69.customer.data;
 
 import com.github.ajharry69.customer.models.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;

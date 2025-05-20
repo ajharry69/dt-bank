@@ -1,5 +1,6 @@
 package com.github.ajharry69.customer;
 
+import com.github.ajharry69.customer.data.CustomerRepository;
 import com.github.ajharry69.customer.models.Customer;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.ArrayList;
@@ -51,13 +51,6 @@ class TestcontainersConfiguration {
     @ServiceConnection
     PostgreSQLContainer<?> postgresContainer() {
         return new PostgreSQLContainer<>(DockerImageName.parse("postgres:17-alpine"));
-    }
-
-    @Bean
-    @RestartScope
-    @ServiceConnection
-    RabbitMQContainer rabbitContainer() {
-        return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.1-alpine"));
     }
 
     @Bean

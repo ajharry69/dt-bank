@@ -80,10 +80,10 @@ These services support the microservices architecture.
 * **Spring Cloud Config**
 * **OpenFeign:** For inter-service communication.
 * **PostgreSQL:** As the RDBMS for each service.
+* **RabbitMQ:** As the messaging queue for inter-service communication.
 * **Maven:** For project build and dependency management.
 * **Testcontainers:** For integration tests and running application services, providing ephemeral Docker containers for
-  dependencies like PostgreSQL,
-  RabbitMQ, etc.
+  dependencies like PostgreSQL, RabbitMQ, etc.
 * **JUnit 5:** For unit and integration testing.
 * **Lombok:** To reduce boilerplate code.
 * **MapStruct:** For DTO-entity mapping.
@@ -104,6 +104,14 @@ These services support the microservices architecture.
 ## Setup and Running the Platform
 
 This section outlines how to run the entire platform locally.
+
+### Starting core services
+
+The following command starts all the services that are used internally by microservices.
+
+```bash
+docker compose up
+```
 
 ### Build and Run Microservices
 

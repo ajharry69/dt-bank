@@ -1,0 +1,13 @@
+services:
+  rabbitmq:
+    image: "rabbitmq:4.1-alpine"
+    environment:
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: guest
+    ports:
+      - "5672:5672"
+    volumes:
+      - mq_data:/var/lib/rabbitmq
+
+volumes:
+  mq_data:
