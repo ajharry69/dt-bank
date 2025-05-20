@@ -35,7 +35,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/accounts")
 @Tag(name = "Accounts", description = "Operations related to accounts")
-class AccountController {
+public class AccountController {
     private final AccountService service;
     private final PagedResourcesAssembler<AccountResponse> accountPageAssembler;
 
