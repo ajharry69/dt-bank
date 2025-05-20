@@ -33,7 +33,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/cards")
 @Tag(name = "Cards", description = "Operations related to cards")
-class CardController {
+public class CardController {
     private final CardService service;
     private final PagedResourcesAssembler<CardResponse> cardPageAssembler;
 

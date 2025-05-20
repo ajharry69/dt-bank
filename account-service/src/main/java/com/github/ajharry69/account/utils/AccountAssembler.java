@@ -11,19 +11,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class AccountAssembler implements RepresentationModelAssembler<AccountResponse, EntityModel<AccountResponse>> {
     @Override
     public EntityModel<AccountResponse> toModel(AccountResponse entity) {
-        return EntityModel.of(entity).add(
-                linkTo(
-                        methodOn(AccountController.class).getCards(
-                                entity.id(),
-                                null,
-                                null,
-                                null,
-                                null,
-                                null,
-                                false,
-                                null
-                        )
-                ).withRel("cards")
-        );
+        return EntityModel.of(entity)
+                .add(linkTo(methodOn(AccountController.class).getAccount(entity.id())).withSelfRel())
+                .add(linkTo(methodOn(AccountController.class).getCards(entity.id(), null, null, null, null, null, false, null)).withRel("cards"));
     }
 }
