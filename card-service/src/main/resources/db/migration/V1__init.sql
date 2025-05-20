@@ -1,13 +1,14 @@
 CREATE TABLE IF NOT EXISTS cards
 (
     id                 UUID PRIMARY KEY,
-    alias              VARCHAR(40) NOT NULL,
-    pan                VARCHAR(40) NOT NULL,
-    cvv                VARCHAR(3)  NOT NULL,
-    type               VARCHAR(20) NOT NULL,
+    alias              VARCHAR(256) NOT NULL,
+    pan                VARCHAR(40)  NOT NULL,
+    cvv                VARCHAR(3)   NOT NULL,
+    type               VARCHAR(20)  NOT NULL,
     date_created       TIMESTAMP WITH TIME ZONE,
     date_last_modified TIMESTAMP WITH TIME ZONE,
-    account_id         UUID        NOT NULL,
+    account_id         UUID         NOT NULL,
+    searchable         tsvector GENERATED ALWAYS AS (to_tsvector('english', coalesce(alias, ''))) STORED,
     UNIQUE (account_id, type) -- database constraint will act as a last resort if code enforcement fails
 );
 

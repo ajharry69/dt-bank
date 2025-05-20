@@ -37,4 +37,9 @@ public class Card {
     @LastModifiedDate
     @Column(insertable = false)
     OffsetDateTime dateLastModified;
+    // Map the database-generated 'searchable' tsvector column.
+    // It's read-only from the application's perspective.
+    // The actual type 'Object' is used here as a placeholder;
+    @Column(insertable = false, updatable = false)
+    Object searchable;
 }
