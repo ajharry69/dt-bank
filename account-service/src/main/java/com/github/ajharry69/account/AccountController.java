@@ -3,7 +3,6 @@ package com.github.ajharry69.account;
 import com.github.ajharry69.account.data.AccountFilter;
 import com.github.ajharry69.account.models.AccountRequest;
 import com.github.ajharry69.account.models.AccountResponse;
-import com.github.ajharry69.account.models.CardType;
 import com.github.ajharry69.account.models.CreateCardRequest;
 import com.github.ajharry69.account.service.card.CardFilter;
 import com.github.ajharry69.account.service.card.dtos.CardResponse;
@@ -29,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -61,25 +59,9 @@ public class AccountController {
             }
     )
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
-            @RequestParam(required = false)
-            UUID customerId,
-            @RequestParam(required = false)
-            String iban,
-            @RequestParam(required = false)
-            String bicSwift,
-            @RequestParam(required = false)
-            LocalDate startDateCreated,
-            @RequestParam(required = false)
-            LocalDate endDateCreated,
+            @ModelAttribute AccountFilter filter,
             Pageable pageable
     ) {
-        var filter = AccountFilter.builder()
-                .customerId(customerId)
-                .iban(iban)
-                .bicSwift(bicSwift)
-                .startDateCreated(startDateCreated)
-                .endDateCreated(endDateCreated)
-                .build();
         Page<AccountResponse> accounts = service.getAccounts(pageable, filter);
         return accountPageAssembler.toModel(
                 accounts,
@@ -315,28 +297,9 @@ public class AccountController {
     )
     public PagedModel<EntityModel<CardResponse>> getCards(
             @PathVariable UUID accountId,
-            @RequestParam(required = false)
-            String alias,
-            @RequestParam(required = false)
-            CardType type,
-            @RequestParam(required = false)
-            String pan,
-            @RequestParam(required = false)
-            LocalDate startDateCreated,
-            @RequestParam(required = false)
-            LocalDate endDateCreated,
-            @RequestParam(required = false, defaultValue = "false")
-            boolean unmask,
+            @ModelAttribute CardFilter filter,
             Pageable pageable) {
-        var filter = CardFilter.builder()
-                .accountId(accountId)
-                .unmask(unmask)
-                .pan(pan)
-                .type(type)
-                .alias(alias)
-                .startDateCreated(startDateCreated)
-                .endDateCreated(endDateCreated)
-                .build();
+        filter.setAccountId(accountId);
         return service.getCards(filter, pageable);
     }
 }

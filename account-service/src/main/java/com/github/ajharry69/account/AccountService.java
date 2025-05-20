@@ -13,8 +13,8 @@ import com.github.ajharry69.account.models.mappers.CardMapper;
 import com.github.ajharry69.account.service.card.CardClient;
 import com.github.ajharry69.account.service.card.CardFilter;
 import com.github.ajharry69.account.service.card.dtos.CardResponse;
-import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
 import com.github.ajharry69.account.service.messaging.account.AccountDeletedEvent;
+import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,22 +102,13 @@ public class AccountService {
     }
 
     public PagedModel<EntityModel<CardResponse>> getCards(CardFilter filter, Pageable pageable) {
-        log.info("Getting cards for account with id: {} with filter: {}", filter.accountId(), filter);
+        log.info("Getting cards with filter: {}", filter);
 
-        checkExistsByIdOrThrow(filter.accountId());
+        checkExistsByIdOrThrow(filter.getAccountId());
 
-        var page = cardClient.getCards(
-                filter.accountId(),
-                filter.alias(),
-                filter.type(),
-                filter.pan(),
-                filter.startDateCreated(),
-                filter.endDateCreated(),
-                filter.unmask(),
-                pageable
-        );
-        if (page != null) {
-            log.info("Found {} cards for account: {}", page.getMetadata().getTotalElements(), filter.accountId());
+        var page = cardClient.getCards(filter, pageable);
+        if (page != null && page.getMetadata() != null) {
+            log.info("Found {} cards for account: {}", page.getMetadata().getTotalElements(), filter.getAccountId());
         }
         return page;
     }

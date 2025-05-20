@@ -155,7 +155,7 @@ class CustomerServiceTest {
             verify(customerMessagingService, times(1))
                     .sendCustomerDeletedEvent(customerDeletedEventArgumentCaptor.capture());
 
-            assertThat( customerDeletedEventArgumentCaptor.getValue().customerId())
+            assertThat(customerDeletedEventArgumentCaptor.getValue().customerId())
                     .isEqualTo(customerId);
         }
     }
@@ -333,14 +333,8 @@ class CustomerServiceTest {
             service.getAccounts(filter, pageable);
 
             // Then
-            verify(accountClient, times(1)).getAccounts(
-                    filter.customerId(),
-                    filter.iban(),
-                    filter.bicSwift(),
-                    filter.startDateCreated(),
-                    filter.endDateCreated(),
-                    pageable
-            );
+            verify(accountClient, times(1))
+                    .getAccounts(filter, pageable);
         }
     }
 }

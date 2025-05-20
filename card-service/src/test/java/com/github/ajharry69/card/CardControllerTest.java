@@ -382,21 +382,23 @@ class CardControllerTest {
                 return map;
             }
 
-            map.put("unmask", filter.unmask());
-            if (filter.pan() != null) {
-                map.put("pan", filter.pan());
+            if (filter.getUnmask() != null) {
+                map.put("unmask", filter.getUnmask());
             }
-            if (filter.alias() != null) {
-                map.put("alias", filter.alias());
+            if (filter.getPan() != null) {
+                map.put("pan", filter.getPan());
             }
-            if (filter.type() != null) {
-                map.put("type", filter.type());
+            if (filter.getAlias() != null) {
+                map.put("alias", filter.getAlias());
             }
-            if (filter.startDateCreated() != null) {
-                map.put("startDateCreated", filter.startDateCreated().format(DateTimeFormatter.ISO_DATE));
+            if (filter.getType() != null) {
+                map.put("type", filter.getType());
             }
-            if (filter.endDateCreated() != null) {
-                map.put("endDateCreated", filter.endDateCreated().format(DateTimeFormatter.ISO_DATE));
+            if (filter.getStartDateCreated() != null) {
+                map.put("startDateCreated", filter.getStartDateCreated().format(DateTimeFormatter.ISO_DATE));
+            }
+            if (filter.getEndDateCreated() != null) {
+                map.put("endDateCreated", filter.getEndDateCreated().format(DateTimeFormatter.ISO_DATE));
             }
             return map;
         }

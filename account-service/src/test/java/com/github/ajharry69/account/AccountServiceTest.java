@@ -9,8 +9,8 @@ import com.github.ajharry69.account.models.mappers.AccountMapper;
 import com.github.ajharry69.account.models.mappers.CardMapper;
 import com.github.ajharry69.account.service.card.CardClient;
 import com.github.ajharry69.account.service.card.CardFilter;
-import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
 import com.github.ajharry69.account.service.messaging.account.AccountDeletedEvent;
+import com.github.ajharry69.account.service.messaging.account.AccountMessagingService;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -354,16 +354,8 @@ class AccountServiceTest {
             service.getCards(filter, pageable);
 
             // Then
-            verify(cardClient, times(1)).getCards(
-                    filter.accountId(),
-                    filter.alias(),
-                    filter.type(),
-                    filter.pan(),
-                    filter.startDateCreated(),
-                    filter.endDateCreated(),
-                    filter.unmask(),
-                    pageable
-            );
+            verify(cardClient, times(1))
+                    .getCards(filter, pageable);
         }
     }
 }

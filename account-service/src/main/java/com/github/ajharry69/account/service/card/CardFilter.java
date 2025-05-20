@@ -1,19 +1,23 @@
 package com.github.ajharry69.account.service.card;
 
 import com.github.ajharry69.account.models.CardType;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Builder
-public record CardFilter(
-        boolean unmask,
-        UUID accountId,
-        String pan,
-        String alias,
-        CardType type,
-        LocalDate startDateCreated,
-        LocalDate endDateCreated
-) {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+public class CardFilter {
+    private Boolean unmask;
+    private UUID accountId;
+    private String pan;
+    private String alias;
+    private CardType type;
+    private LocalDate startDateCreated;
+    private LocalDate endDateCreated;
 }

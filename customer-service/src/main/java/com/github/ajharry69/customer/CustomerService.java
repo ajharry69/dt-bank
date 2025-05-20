@@ -102,20 +102,13 @@ public class CustomerService {
     }
 
     public PagedModel<EntityModel<AccountResponse>> getAccounts(AccountFilter filter, Pageable pageable) {
-        log.info("Getting accounts for customer with id: {} with filter: {}", filter.customerId(), filter);
+        log.info("Getting accounts with filter: {}", filter);
 
-        checkExistsByIdOrThrow(filter.customerId());
+        checkExistsByIdOrThrow(filter.getCustomerId());
 
-        var page = accountClient.getAccounts(
-                filter.customerId(),
-                filter.iban(),
-                filter.bicSwift(),
-                filter.startDateCreated(),
-                filter.endDateCreated(),
-                pageable
-        );
-        if (page != null) {
-            log.info("Found {} accounts for customer: {}", page.getMetadata().getTotalElements(), filter.customerId());
+        var page = accountClient.getAccounts(filter, pageable);
+        if (page != null && page.getMetadata() != null) {
+            log.info("Found {} accounts for customer: {}", page.getMetadata().getTotalElements(), filter.getCustomerId());
         }
         return page;
     }

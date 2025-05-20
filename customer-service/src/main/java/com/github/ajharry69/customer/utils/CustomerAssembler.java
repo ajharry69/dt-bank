@@ -16,7 +16,7 @@ public class CustomerAssembler implements RepresentationModelAssembler<CustomerR
                 .add(
                         linkTo(
                                 methodOn(CustomerController.class)
-                                        .getAccounts(entity.id(), null, null, null, null, null)
+                                        .getAccounts(entity.id(), null, null)
                         ).withRel("accounts")
                 );
     }

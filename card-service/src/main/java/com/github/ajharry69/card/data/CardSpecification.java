@@ -17,11 +17,11 @@ public class CardSpecification implements Specification<Card> {
     public Predicate toPredicate(Root<Card> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (filter.accountId() != null) {
-            predicates.add(cb.equal(root.get("accountId"), filter.accountId()));
+        if (filter.getAccountId() != null) {
+            predicates.add(cb.equal(root.get("accountId"), filter.getAccountId()));
         }
-        if (filter.alias() != null && StringUtils.hasText(filter.alias())) {
-            String searchTerm = filter.alias().trim();
+        if (filter.getAlias() != null && StringUtils.hasText(filter.getAlias())) {
+            String searchTerm = filter.getAlias().trim();
 
             var tsQuery = cb.function(
                     "websearch_to_tsquery",
@@ -62,17 +62,17 @@ public class CardSpecification implements Specification<Card> {
                 query.orderBy(orders);
             }
         }
-        if (filter.type() != null) {
-            predicates.add(cb.equal(root.get("type"), filter.type()));
+        if (filter.getType() != null) {
+            predicates.add(cb.equal(root.get("type"), filter.getType()));
         }
-        if (filter.pan() != null) {
-            predicates.add(cb.equal(root.get("pan"), filter.pan().trim()));
+        if (filter.getPan() != null) {
+            predicates.add(cb.equal(root.get("pan"), filter.getPan().trim()));
         }
-        if (filter.startDateCreated() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(root.get("dateCreated"), filter.startDateCreated()));
+        if (filter.getStartDateCreated() != null) {
+            predicates.add(cb.greaterThanOrEqualTo(root.get("dateCreated"), filter.getStartDateCreated()));
         }
-        if (filter.endDateCreated() != null) {
-            predicates.add(cb.lessThanOrEqualTo(root.get("dateCreated"), filter.endDateCreated()));
+        if (filter.getEndDateCreated() != null) {
+            predicates.add(cb.lessThanOrEqualTo(root.get("dateCreated"), filter.getEndDateCreated()));
         }
 
         return cb.and(predicates.toArray(new Predicate[0]));

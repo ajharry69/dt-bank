@@ -2,7 +2,6 @@ package com.github.ajharry69.card;
 
 import com.github.ajharry69.card.data.CardFilter;
 import com.github.ajharry69.card.models.CardResponse;
-import com.github.ajharry69.card.models.CardType;
 import com.github.ajharry69.card.models.CreateCardRequest;
 import com.github.ajharry69.card.models.UpdateCardRequest;
 import com.github.ajharry69.card.utils.CardAssembler;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -27,7 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -59,32 +56,10 @@ public class CardController {
             }
     )
     public PagedModel<EntityModel<CardResponse>> getCards(
-            @RequestParam(required = false)
-            UUID accountId,
-            @RequestParam(required = false)
-            String alias,
-            @RequestParam(required = false)
-            CardType type,
-            @RequestParam(required = false)
-            String pan,
-            @RequestParam(required = false)
-            LocalDate startDateCreated,
-            @RequestParam(required = false)
-            LocalDate endDateCreated,
-            @RequestParam(required = false, defaultValue = "false")
-            boolean unmask,
+            @ModelAttribute CardFilter filter,
             Pageable pageable
     ) {
-        var filter = CardFilter.builder()
-                .accountId(accountId)
-                .unmask(unmask)
-                .pan(pan)
-                .type(type)
-                .alias(alias)
-                .startDateCreated(startDateCreated)
-                .endDateCreated(endDateCreated)
-                .build();
-        Page<CardResponse> cards = service.getCards(pageable, filter);
+        var cards = service.getCards(pageable, filter);
         return cardPageAssembler.toModel(
                 cards,
                 new CardAssembler()

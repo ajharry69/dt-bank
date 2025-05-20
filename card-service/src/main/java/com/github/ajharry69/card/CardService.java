@@ -31,10 +31,10 @@ public class CardService {
         log.info("Getting cards with filter: {}...", filter);
         var specification = new CardSpecification(filter);
         Function<Card, CardResponse> toResponse;
-        if (filter.unmask()) {
-            toResponse = mapper::toUnmaskedResponse;
-        } else {
+        if (filter.getUnmask() == null || !filter.getUnmask()) {
             toResponse = mapper::toResponse;
+        } else {
+            toResponse = mapper::toUnmaskedResponse;
         }
         Page<CardResponse> page = repository.findAll(specification, pageable)
                 .map(toResponse);

@@ -28,7 +28,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -60,19 +59,9 @@ public class CustomerController {
             }
     )
     public PagedModel<EntityModel<CustomerResponse>> getCustomers(
-            @RequestParam(required = false)
-            String name,
-            @RequestParam(required = false)
-            LocalDate startDateCreated,
-            @RequestParam(required = false)
-            LocalDate endDateCreated,
+            @ModelAttribute CustomerFilter filter,
             Pageable pageable
     ) {
-        var filter = CustomerFilter.builder()
-                .name(name)
-                .startDateCreated(startDateCreated)
-                .endDateCreated(endDateCreated)
-                .build();
         Page<CustomerResponse> customers = service.getCustomers(pageable, filter);
         return customerPageAssembler.toModel(
                 customers,
@@ -308,22 +297,9 @@ public class CustomerController {
     )
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
             @PathVariable UUID customerId,
-            @RequestParam(required = false)
-            String iban,
-            @RequestParam(required = false)
-            String bicSwift,
-            @RequestParam(required = false)
-            LocalDate startDateCreated,
-            @RequestParam(required = false)
-            LocalDate endDateCreated,
+            @ModelAttribute AccountFilter filter,
             Pageable pageable) {
-        var filter = AccountFilter.builder()
-                .customerId(customerId)
-                .iban(iban)
-                .bicSwift(bicSwift)
-                .startDateCreated(startDateCreated)
-                .endDateCreated(endDateCreated)
-                .build();
+        filter.setCustomerId(customerId);
         return service.getAccounts(filter, pageable);
     }
 
