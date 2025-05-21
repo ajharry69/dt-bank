@@ -1,7 +1,7 @@
 package com.github.ajharry69.customer;
 
-import com.github.ajharry69.customer.data.CustomerRepository;
-import com.github.ajharry69.customer.models.Customer;
+import com.github.ajharry69.customer.service.customer.data.CustomerRepository;
+import com.github.ajharry69.customer.service.customer.models.Customer;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +20,7 @@ import java.util.Random;
 
 @TestConfiguration(proxyBeanMethods = false)
 @Slf4j
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
     private final Faker faker = new Faker();
 
     @Bean

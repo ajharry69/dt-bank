@@ -10,7 +10,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration(proxyBeanMethods = false)
 @Slf4j
-class OptionalTestcontainersConfiguration {
+public class OptionalTestcontainersConfiguration {
     @Bean
     @RestartScope
     @ServiceConnection

@@ -1,7 +1,8 @@
 package com.github.ajharry69.customer.service.account;
 
-import com.github.ajharry69.customer.service.account.dtos.AccountResponse;
-import com.github.ajharry69.customer.service.account.dtos.CreateAccountRequest;
+import com.github.ajharry69.customer.service.account.data.AccountFilter;
+import com.github.ajharry69.customer.service.account.models.dtos.AccountResponse;
+import com.github.ajharry69.customer.service.account.models.dtos.CreateCustomerAccountRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AccountClient {
 
     @PostMapping
-    EntityModel<AccountResponse> createAccount(@RequestBody CreateAccountRequest request);
+    EntityModel<AccountResponse> createAccount(@RequestBody CreateCustomerAccountRequest request);
 
     @GetMapping
     PagedModel<EntityModel<AccountResponse>> getAccounts(@SpringQueryMap AccountFilter filter, Pageable pageable);
