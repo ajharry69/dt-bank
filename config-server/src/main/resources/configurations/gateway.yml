@@ -2,6 +2,9 @@ eureka:
   client:
     register-with-eureka: false
 spring:
+  threads:
+    virtual:
+      enabled: true
   cloud:
     gateway:
       discovery:

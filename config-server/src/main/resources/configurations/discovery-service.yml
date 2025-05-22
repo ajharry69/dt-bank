@@ -1,5 +1,9 @@
 server:
   port: 8761
+spring:
+  threads:
+    virtual:
+      enabled: true
 eureka:
   instance:
     hostname: localhost
