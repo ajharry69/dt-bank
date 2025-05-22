@@ -1,5 +1,6 @@
 server:
   port: 8100
+  forward-headers-strategy: framework
 spring:
   threads:
     virtual:

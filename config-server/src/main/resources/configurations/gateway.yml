@@ -16,16 +16,31 @@ spring:
             uri: lb://CUSTOMER-SERVICE
             predicates:
               - Path=/api/v1/customers**, /api/v1/customers/**, /customer-service/v3/api-docs
+            filters:
+              - AddRequestHeader=X-Forwarded-For, {remote_addr}
+              - AddRequestHeader=X-Forwarded-Host, {host}
+              - AddRequestHeader=X-Forwarded-Port, {server_port}
+              - AddRequestHeader=X-Forwarded-Proto, {scheme}
 
           - id: account-service
             uri: lb://ACCOUNT-SERVICE
             predicates:
               - Path=/api/v1/accounts**, /api/v1/accounts/**, /account-service/v3/api-docs
+            filters:
+              - AddRequestHeader=X-Forwarded-For, {remote_addr}
+              - AddRequestHeader=X-Forwarded-Host, {host}
+              - AddRequestHeader=X-Forwarded-Port, {server_port}
+              - AddRequestHeader=X-Forwarded-Proto, {scheme}
 
           - id: card-service
             uri: lb://CARD-SERVICE
             predicates:
               - Path=/api/v1/cards**, /api/v1/cards/**, /card-service/v3/api-docs
+            filters:
+              - AddRequestHeader=X-Forwarded-For, {remote_addr}
+              - AddRequestHeader=X-Forwarded-Host, {host}
+              - AddRequestHeader=X-Forwarded-Port, {server_port}
+              - AddRequestHeader=X-Forwarded-Proto, {scheme}
 
 springdoc:
   enable-native-support: true
