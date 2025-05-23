@@ -1,6 +1,10 @@
 server:
   port: 8100
   forward-headers-strategy: framework
+management:
+  tracing:
+    sampling:
+      probability: 1
 spring:
   threads:
     virtual:

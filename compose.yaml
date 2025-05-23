@@ -9,5 +9,10 @@ services:
     volumes:
       - mq_data:/var/lib/rabbitmq
 
+  zipkin:
+    image: "openzipkin/zipkin:3.5"
+    ports:
+      - "9411:9411"
+
 volumes:
   mq_data:
