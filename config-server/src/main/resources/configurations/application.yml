@@ -1,8 +1,7 @@
 application:
   config:
-    card-url: http://localhost:8080/api/v1/cards
-    account-url: http://localhost:8080/api/v1/accounts
-    customer-url: http://localhost:8080/api/v1/customers
+    gateway:
+      url: http://localhost:8080
 management:
   tracing:
     sampling:

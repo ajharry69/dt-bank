@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
         name = "card-service",
-        url = "${application.config.card-url:http://localhost:8080/api/v1/cards}"
+        url = "${application.config.gateway.url:http://localhost:8080}/api/v1/cards"
 )
 public interface CardClient {
 
