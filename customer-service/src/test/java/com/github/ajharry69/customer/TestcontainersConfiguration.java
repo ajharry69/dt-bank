@@ -5,6 +5,7 @@ import com.github.ajharry69.customer.service.customer.models.Customer;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.devtools.restart.RestartScope;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.ArrayList;
@@ -60,4 +62,11 @@ public class TestcontainersConfiguration {
         return new GenericContainer<>(DockerImageName.parse("redis:8.0-alpine")).withExposedPorts(6379);
     }
 
+    @Bean
+    @RestartScope
+    @ServiceConnection
+    @ConditionalOnProperty(name = "application.config.rabbitmq.enabled", havingValue = "true")
+    RabbitMQContainer rabbitContainer() {
+        return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.1-alpine"));
+    }
 }
