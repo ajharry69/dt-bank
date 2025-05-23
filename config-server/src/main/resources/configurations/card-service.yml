@@ -1,16 +1,6 @@
 server:
   port: 8100
-  forward-headers-strategy: framework
-management:
-  tracing:
-    sampling:
-      probability: 1
-spring:
-  threads:
-    virtual:
-      enabled: true
 springdoc:
-  paths-to-match: /api/**
   api-docs:
     path: /card-service/v3/api-docs
   swagger-ui:
