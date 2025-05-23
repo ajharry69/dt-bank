@@ -4,6 +4,8 @@ eureka:
 spring:
   cloud:
     gateway:
+      metrics:
+        enabled: true
       discovery:
         locator:
           enabled: true
