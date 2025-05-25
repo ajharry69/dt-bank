@@ -9,6 +9,11 @@ management:
 server:
   forward-headers-strategy: framework
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_BASE_URL:http://localhost:8180}/realms/dt-bank
   threads:
     virtual:
       enabled: true

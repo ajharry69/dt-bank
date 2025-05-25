@@ -1,4 +1,15 @@
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./gateway/src/test/resources/realm.json:/opt/keycloak/data/import/realm.json:ro
+    command: start-dev --import-realm
+
   rabbitmq:
     image: "rabbitmq:4.1-alpine"
     environment:
