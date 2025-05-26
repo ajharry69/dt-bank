@@ -2,8 +2,9 @@ package com.github.ajharry69.customer;
 
 import com.github.ajharry69.customer.service.customer.data.CustomerRepository;
 import com.github.ajharry69.customer.service.customer.models.Customer;
-import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.devtools.restart.RestartScope;
@@ -21,8 +22,8 @@ import java.util.List;
 import java.util.Random;
 
 @TestConfiguration(proxyBeanMethods = false)
-@Slf4j
 public class TestcontainersConfiguration {
+    private static final Logger log = LoggerFactory.getLogger(TestcontainersConfiguration.class);
     private final Faker faker = new Faker();
 
     @Bean

@@ -20,6 +20,9 @@ orchestrated through an API Gateway.
 * **Eureka Discovery Service:** Allows services to register and discover each other dynamically.
 * **Spring Cloud Config Server:** Provides centralized configuration management for all microservices.
 * **PostgreSQL:** The relational database used by each microservice for persistence.
+* **RabbitMQ:** The messaging queue for inter-service communication.
+* **Keycloak:** An open-source identity and access management tool that secures API endpoints using JWT Bearer token
+  authentication.
 
 ---
 
@@ -30,17 +33,17 @@ Each microservice is a Spring Boot application built with Maven.
 ### Customer Service (`customer-service`)
 
 * **Description:** Handles CRUD operations for customer's biographical data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html?urls.primaryName=Customers.
 
 ### Account Service (`account-service`)
 
 * **Description:** Manages customer bank account data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html?urls.primaryName=Accounts.
 
 ### Card Service (`card-service`)
 
 * **Description:** Manages customer card data.
-* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html and OpenAPI spec at `/v3/api-docs`.
+* **API Documentation:** Exposes Swagger UI at http://localhost:8080/swagger-ui.html?urls.primaryName=Cards.
 
 ---
 
@@ -59,7 +62,7 @@ These services support the microservices architecture.
 
 * **Description:** Allows microservices to register themselves and discover other registered services dynamically.
   The Gateway uses Eureka to find downstream services.
-* **Port:** 8888
+* **Port:** 8761
 * **Dashboard:** Accessible at http://localhost:8761
 
 ### Spring Cloud Config Server (`config-server`)
@@ -75,12 +78,14 @@ These services support the microservices architecture.
 * **Java 24**
 * **Spring Boot 3.4.5**
 * **Spring Cloud 2024.0.1**
-* **Spring Cloud Gateway (MVC version)**
+* **Spring Cloud Gateway (Reactive)**
 * **Spring Cloud Netflix Eureka**
 * **Spring Cloud Config**
 * **OpenFeign:** For inter-service communication.
 * **PostgreSQL:** As the RDBMS for each service.
 * **RabbitMQ:** As the messaging queue for inter-service communication.
+* **Keycloak:** An open-source identity and access management tool that secures API endpoints using JWT Bearer token
+  authentication.
 * **Maven:** For project build and dependency management.
 * **Testcontainers:** For integration tests and running application services, providing ephemeral Docker containers for
   dependencies like PostgreSQL, RabbitMQ, etc.
@@ -94,7 +99,7 @@ These services support the microservices architecture.
 ## Prerequisites
 
 * **Java 24 JDK** (or compatible)
-* **Apache Maven 3.6+**
+* **Gradle 8.14+**
 * **Docker**
 * **Git** (for cloning the project)
 * An IDE (e.g., IntelliJ IDEA, Eclipse, VS Code)
@@ -121,14 +126,14 @@ Locate and run the main applications referenced in the following list.
 > 
 > **Video reference:** https://drive.google.com/file/d/1PieCRJWxzD3R71tVUKQEufj_lphJWrlk/view
 
-| Service             | Main Application                                                                                                                        |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `config-server`     | [ConfigServerApplication.java](config-server/src/main/java/com/github/ajharry69/config/server/ConfigServerApplication.java)             |
-| `discovery-service` | [DiscoveryServiceApplication.java](discovery-service/src/main/java/com/github/ajharry69/discovery/DiscoveryServiceApplication.java)     |
-| `customer-service`  | [TestCustomerServiceApplication.java](customer-service/src/test/java/com/github/ajharry69/customer/TestCustomerServiceApplication.java) |
-| `account-service`   | [TestAccountServiceApplication.java](account-service/src/test/java/com/github/ajharry69/account/TestAccountServiceApplication.java)     |
-| `card-service`      | [TestCardServiceApplication.java](card-service/src/test/java/com/github/ajharry69/card/TestCardServiceApplication.java)                 |
-| `gateway`           | [GatewayApplication.java](gateway/src/main/java/com/github/ajharry69/gateway/GatewayApplication.java)                                   |
+| Service             | Start Command                             | Main Application                                                                                                                        |
+|---------------------|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `config-server`     | `./gradlew :config-server:bootRun`        | [ConfigServerApplication.java](config-server/src/main/java/com/github/ajharry69/config/server/ConfigServerApplication.java)             |
+| `discovery-service` | `./gradlew :discovery-service:bootRun`    | [DiscoveryServiceApplication.java](discovery-service/src/main/java/com/github/ajharry69/discovery/DiscoveryServiceApplication.java)     |
+| `customer-service`  | `./gradlew :customer-service:bootTestRun` | [TestCustomerServiceApplication.java](customer-service/src/test/java/com/github/ajharry69/customer/TestCustomerServiceApplication.java) |
+| `account-service`   | `./gradlew :account-service:bootTestRun`  | [TestAccountServiceApplication.java](account-service/src/test/java/com/github/ajharry69/account/TestAccountServiceApplication.java)     |
+| `card-service`      | `./gradlew :card-service:bootTestRun`     | [TestCardServiceApplication.java](card-service/src/test/java/com/github/ajharry69/card/TestCardServiceApplication.java)                 |
+| `gateway`           | `./gradlew :gateway:bootRun`              | [GatewayApplication.java](gateway/src/main/java/com/github/ajharry69/gateway/GatewayApplication.java)                                   |
 
 Wait for each service to start and register with Eureka (check Eureka dashboard) before starting dependent services or
 the gateway.
@@ -146,6 +151,8 @@ API documentation is generated using Springdoc OpenAPI.
 ## Testing
 
 The project includes both unit and integration tests.
+
+`./gradlew --info --rerun-tasks --exclude-task :gateway:test test`
 
 > **Video reference:** https://drive.google.com/file/d/1VxS-deQrexQ3mpeLVd9cLlRDgV9M42TP/view
 
