@@ -18,13 +18,7 @@ repositories {
 }
 
 dependencies {
-	implementation("com.github.dasniko:testcontainers-keycloak:3.4.0")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-	implementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<Test> {

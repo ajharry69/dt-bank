@@ -34,4 +34,12 @@ public class TestcontainersConfiguration {
     RabbitMQContainer rabbitContainer() {
         return new RabbitMQContainer(DockerImageName.parse("rabbitmq:4.1-alpine"));
     }
+
+    @Bean
+    @RestartScope
+    @ServiceConnection(name = "openzipkin/zipkin")
+    @ConditionalOnProperty(name = "application.config.zipkin.enabled", havingValue = "true")
+    GenericContainer<?> zipkinContainer() {
+        return new GenericContainer<>(DockerImageName.parse("openzipkin/zipkin:3.5")).withExposedPorts(9411);
+    }
 }
