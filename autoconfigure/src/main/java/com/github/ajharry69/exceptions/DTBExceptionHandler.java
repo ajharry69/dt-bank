@@ -1,11 +1,11 @@
-package com.github.ajharry69.customer.exceptions;
+package com.github.ajharry69.exceptions;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -27,11 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 @ControllerAdvice
-@AllArgsConstructor
 public class DTBExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(DTBExceptionHandler.class);
     private final ObjectMapper objectMapper;
+
+    public DTBExceptionHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Problem> handleException(Exception exception, HttpServletRequest request) {

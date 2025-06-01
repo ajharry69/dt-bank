@@ -17,8 +17,19 @@ repositories {
 	mavenCentral()
 }
 
+extra["springCloudVersion"] = "2024.0.1"
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+	}
+}
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-hateoas")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 }
 
 tasks.withType<Test> {
