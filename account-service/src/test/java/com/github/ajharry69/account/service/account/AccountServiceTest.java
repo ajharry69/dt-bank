@@ -1,15 +1,15 @@
 package com.github.ajharry69.account.service.account;
 
+import com.github.ajharry69.account.exceptions.AccountNotFoundException;
 import com.github.ajharry69.account.service.account.data.AccountFilter;
 import com.github.ajharry69.account.service.account.data.AccountRepository;
 import com.github.ajharry69.account.service.account.data.AccountSpecification;
-import com.github.ajharry69.account.exceptions.AccountNotFoundException;
-import com.github.ajharry69.account.service.account.models.Account;
-import com.github.ajharry69.account.service.account.models.dtos.AccountRequest;
-import com.github.ajharry69.account.service.account.models.dtos.AccountResponse;
-import com.github.ajharry69.account.service.account.models.AccountMapper;
 import com.github.ajharry69.account.service.account.messaging.AccountDeletedEvent;
 import com.github.ajharry69.account.service.account.messaging.AccountMessagingService;
+import com.github.ajharry69.account.service.account.models.Account;
+import com.github.ajharry69.account.service.account.models.AccountMapper;
+import com.github.ajharry69.account.service.account.models.dtos.AccountRequest;
+import com.github.ajharry69.account.service.account.models.dtos.AccountResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -148,7 +148,7 @@ class AccountServiceTest {
             verify(accountMessagingService, times(1))
                     .sendAccountDeletedEvent(accountDeletedEventArgumentCaptor.capture());
 
-            assertThat( accountDeletedEventArgumentCaptor.getValue().accountId())
+            assertThat(accountDeletedEventArgumentCaptor.getValue().accountId())
                     .isEqualTo(accountId);
         }
     }

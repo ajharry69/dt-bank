@@ -123,7 +123,7 @@ docker compose up
 Locate and run the main applications referenced in the following list.
 
 > Ensure Docker is running on your system and start the applications in the order they are listed in.
-> 
+>
 > **Video reference:** https://drive.google.com/file/d/1PieCRJWxzD3R71tVUKQEufj_lphJWrlk/view
 
 | Service             | Start Command                             | Main Application                                                                                                                        |

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -37,7 +38,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import({TestcontainersConfiguration.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(value = {"test"})
 class AccountControllerTest {
     private static final Faker faker = new Faker();
     private static final String iban = iban();
@@ -45,6 +47,14 @@ class AccountControllerTest {
     @Autowired
     private AccountRepository repository;
     private Account account;
+
+    private static String iban() {
+        return faker.finance().iban();
+    }
+
+    private static String bicSwift() {
+        return faker.finance().bic();
+    }
 
     private @NotNull HashMap<String, Object> validAccountDetailRequest() {
         HashMap<String, Object> map = new HashMap<>();
@@ -56,14 +66,6 @@ class AccountControllerTest {
         HashMap<String, Object> map = new HashMap<>();
         map.put("accountId", UUID.randomUUID());
         return map;
-    }
-
-    private static String iban() {
-        return faker.finance().iban();
-    }
-
-    private static String bicSwift() {
-        return faker.finance().bic();
     }
 
     @BeforeEach

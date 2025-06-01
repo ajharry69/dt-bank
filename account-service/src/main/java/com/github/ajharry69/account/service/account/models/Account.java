@@ -17,6 +17,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @EntityListeners(value = AuditingEntityListener.class)
 public class Account {
+    @CreatedDate
+    @Column(updatable = false)
+    OffsetDateTime dateCreated;
+    @LastModifiedDate
+    @Column(insertable = false)
+    OffsetDateTime dateLastModified;
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,10 +32,4 @@ public class Account {
     private String bicSwift;
     @Column(nullable = false)
     private UUID customerId;
-    @CreatedDate
-    @Column(updatable = false)
-    OffsetDateTime dateCreated;
-    @LastModifiedDate
-    @Column(insertable = false)
-    OffsetDateTime dateLastModified;
 }

@@ -17,14 +17,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @EntityListeners(value = AuditingEntityListener.class)
 public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-    @Column(nullable = false)
-    private String firstName;
-    @Column(nullable = false)
-    private String lastName;
-    private String otherName;
     @CreatedDate
     @Column(updatable = false)
     OffsetDateTime dateCreated;
@@ -36,4 +28,12 @@ public class Customer {
     // The actual type 'Object' is used here as a placeholder;
     @Column(insertable = false, updatable = false)
     Object searchable;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+    private String otherName;
 }

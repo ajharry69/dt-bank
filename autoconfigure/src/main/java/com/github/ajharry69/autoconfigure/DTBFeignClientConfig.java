@@ -1,7 +1,8 @@
-package com.github.ajharry69.customer.config;
+package com.github.ajharry69.autoconfigure;
 
 import feign.RequestInterceptor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -11,8 +12,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 @Configuration
-@Slf4j
-public class FeignClientConfig {
+public class DTBFeignClientConfig {
+    private static final Logger log = LoggerFactory.getLogger(DTBFeignClientConfig.class);
+
     @Bean
     RequestInterceptor requestInterceptor() {
         return requestTemplate -> {

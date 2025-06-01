@@ -1,8 +1,8 @@
 package com.github.ajharry69.account.service.card;
 
-import com.github.ajharry69.account.service.card.models.dtos.CreateCardRequest;
 import com.github.ajharry69.account.service.card.data.CardFilter;
 import com.github.ajharry69.account.service.card.models.dtos.CardResponse;
+import com.github.ajharry69.account.service.card.models.dtos.CreateCardRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +30,7 @@ import java.util.UUID;
 @Tag(name = "Cards", description = "Operations related to cards")
 public class CardController {
     private final CardService service;
+
     @PostMapping(value = "/{accountId}/cards", produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Create card for account")
     @ApiResponses(

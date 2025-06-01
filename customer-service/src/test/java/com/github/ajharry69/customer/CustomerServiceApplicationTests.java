@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest(properties = "spring.profiles.active=test")
 class CustomerServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }

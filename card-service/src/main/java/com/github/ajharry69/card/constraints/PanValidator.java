@@ -10,7 +10,7 @@ class PanValidator implements ConstraintValidator<Pan, String> {
             return true; // Allow empty or null PAN if @NotBlank is used separately
         }
 
-        pan = pan.replaceAll("-","");
+        pan = pan.replaceAll("-", "");
 
         if (!pan.matches("^[0-9]{13,19}$")) {
             return false;

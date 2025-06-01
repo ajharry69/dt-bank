@@ -1,15 +1,15 @@
 package com.github.ajharry69.customer.service.customer;
 
+import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.service.customer.data.CustomerFilter;
 import com.github.ajharry69.customer.service.customer.data.CustomerRepository;
 import com.github.ajharry69.customer.service.customer.data.CustomerSpecification;
-import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
-import com.github.ajharry69.customer.service.customer.models.Customer;
-import com.github.ajharry69.customer.service.customer.models.dtos.CustomerRequest;
-import com.github.ajharry69.customer.service.customer.models.dtos.CustomerResponse;
-import com.github.ajharry69.customer.service.customer.models.CustomerMapper;
 import com.github.ajharry69.customer.service.customer.messaging.CustomerDeletedEvent;
 import com.github.ajharry69.customer.service.customer.messaging.CustomerMessagingService;
+import com.github.ajharry69.customer.service.customer.models.Customer;
+import com.github.ajharry69.customer.service.customer.models.CustomerMapper;
+import com.github.ajharry69.customer.service.customer.models.dtos.CustomerRequest;
+import com.github.ajharry69.customer.service.customer.models.dtos.CustomerResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

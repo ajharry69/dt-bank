@@ -1,8 +1,8 @@
 package com.github.ajharry69.customer.service.customer;
 
 import com.github.ajharry69.customer.service.account.AccountController;
-import com.github.ajharry69.customer.service.customer.models.dtos.CustomerResponse;
 import com.github.ajharry69.customer.service.account.data.AccountFilter;
+import com.github.ajharry69.customer.service.customer.models.dtos.CustomerResponse;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 

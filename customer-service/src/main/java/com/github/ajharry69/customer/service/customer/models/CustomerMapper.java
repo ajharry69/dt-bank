@@ -15,5 +15,6 @@ import org.mapstruct.ReportingPolicy;
 public interface CustomerMapper {
     @Mapping(target = "id", ignore = true)
     Customer toEntity(CustomerRequest request);
+
     CustomerResponse toResponse(Customer customer);
 }

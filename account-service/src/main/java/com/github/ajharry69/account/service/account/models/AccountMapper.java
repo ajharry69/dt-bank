@@ -15,5 +15,6 @@ import org.mapstruct.ReportingPolicy;
 public interface AccountMapper {
     @Mapping(target = "id", ignore = true)
     Account toEntity(AccountRequest request);
+
     AccountResponse toResponse(Account account);
 }

@@ -44,6 +44,14 @@ class CustomerControllerTest {
     private CustomerRepository repository;
     private Customer customer;
 
+    private static String firstName() {
+        return faker.name().firstName();
+    }
+
+    private static String lastName() {
+        return faker.name().lastName();
+    }
+
     private @NotNull HashMap<String, Object> validCustomerDetailRequest() {
         HashMap<String, Object> map = new HashMap<>();
         map.put("customerId", customer.getId());
@@ -54,14 +62,6 @@ class CustomerControllerTest {
         HashMap<String, Object> map = new HashMap<>();
         map.put("customerId", UUID.randomUUID());
         return map;
-    }
-
-    private static String firstName() {
-        return faker.name().firstName();
-    }
-
-    private static String lastName() {
-        return faker.name().lastName();
     }
 
     @BeforeEach

@@ -1,6 +1,6 @@
 package com.github.ajharry69.customer.service.account;
 
-import com.github.ajharry69.customer.config.FeignClientConfig;
+import com.github.ajharry69.autoconfigure.DTBFeignClientConfig;
 import com.github.ajharry69.customer.service.account.data.AccountFilter;
 import com.github.ajharry69.customer.service.account.models.dtos.AccountResponse;
 import com.github.ajharry69.customer.service.account.models.dtos.CreateCustomerAccountRequest;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(
         name = "account-service",
         url = "${application.config.gateway.url:http://localhost:8080}/api/v1/accounts",
-        configuration = {FeignClientConfig.class}
+        configuration = {DTBFeignClientConfig.class}
 )
 public interface AccountClient {
 

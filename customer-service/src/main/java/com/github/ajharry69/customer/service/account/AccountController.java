@@ -1,8 +1,8 @@
 package com.github.ajharry69.customer.service.account;
 
 import com.github.ajharry69.customer.service.account.data.AccountFilter;
-import com.github.ajharry69.customer.service.account.models.dtos.CreateAccountRequest;
 import com.github.ajharry69.customer.service.account.models.dtos.AccountResponse;
+import com.github.ajharry69.customer.service.account.models.dtos.CreateAccountRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,11 +1,11 @@
 package com.github.ajharry69.customer.service.account;
 
+import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
 import com.github.ajharry69.customer.service.account.data.AccountFilter;
+import com.github.ajharry69.customer.service.account.models.AccountMapper;
+import com.github.ajharry69.customer.service.account.models.dtos.CreateAccountRequest;
 import com.github.ajharry69.customer.service.account.models.dtos.CreateCustomerAccountRequest;
 import com.github.ajharry69.customer.service.customer.data.CustomerRepository;
-import com.github.ajharry69.customer.exceptions.CustomerNotFoundException;
-import com.github.ajharry69.customer.service.account.models.dtos.CreateAccountRequest;
-import com.github.ajharry69.customer.service.account.models.AccountMapper;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

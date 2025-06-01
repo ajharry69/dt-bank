@@ -1,7 +1,7 @@
 package com.github.ajharry69.account.service.customer.messaging;
 
-import com.github.ajharry69.account.service.account.data.AccountRepository;
 import com.github.ajharry69.account.service.account.AccountService;
+import com.github.ajharry69.account.service.account.data.AccountRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
