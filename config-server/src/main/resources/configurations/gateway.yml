@@ -9,21 +9,102 @@ spring:
       discovery:
         locator:
           enabled: true
+      default-filters:
+        - SaveSession
+        - TokenRelay
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter:
+              replenishRate: 10
+              burstCapacity: 20
+              requestedTokens: 1
       routes:
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/api/v1/customers**, /api/v1/customers/**, /customer-service/v3/api-docs
+          filters:
+            - AddRequestHeader=X-Tenant,acme
+            - AddResponseHeader=X-Genre,fantasy
+            - name: CircuitBreaker
+              args:
+                name: customer-service
+                fallbackUri: forward:/customers-fallback
+            - name: Retry
+              args:
+                retries: 3
+                method: GET
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
 
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
           predicates:
             - Path=/api/v1/accounts**, /api/v1/accounts/**, /account-service/v3/api-docs
+          filters:
+            - AddRequestHeader=X-Tenant,acme
+            - AddResponseHeader=X-Genre,fantasy
+            - name: CircuitBreaker
+              args:
+                name: account-service
+                fallbackUri: forward:/accounts-fallback
+            - name: Retry
+              args:
+                retries: 3
+                method: GET
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
 
         - id: card-service
           uri: lb://CARD-SERVICE
           predicates:
             - Path=/api/v1/cards**, /api/v1/cards/**, /card-service/v3/api-docs
+          filters:
+            - AddRequestHeader=X-Tenant,acme
+            - AddResponseHeader=X-Genre,fantasy
+            - name: CircuitBreaker
+              args:
+                name: card-service
+                fallbackUri: forward:/cards-fallback
+            - name: Retry
+              args:
+                retries: 3
+                method: GET
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      customer-service:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
+      account-service:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
+      card-service:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
+  timelimiter:
+    instances:
+      customer-service:
+        timeoutDuration: 3s
+      account-service:
+        timeoutDuration: 3s
+      card-service:
+        timeoutDuration: 3s
 
 springdoc:
   enable-native-support: true

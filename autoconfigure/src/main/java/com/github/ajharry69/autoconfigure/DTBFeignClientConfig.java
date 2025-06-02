@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,7 +29,12 @@ public class DTBFeignClientConfig {
             String authorizationHeaderValue;
             if (authentication != null) {
                 log.info("Using authentication credentials from the security context...");
-                authorizationHeaderValue = "Bearer " + authentication.getCredentials();
+
+                var credentials = authentication.getCredentials();
+                if (credentials instanceof Jwt) {
+                    credentials = ((Jwt) credentials).getTokenValue();
+                }
+                authorizationHeaderValue = "Bearer " + credentials;
             } else {
                 log.info("Falling back to authentication credentials from the request attributes...");
                 var requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

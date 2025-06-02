@@ -50,7 +50,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-config")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-    implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
@@ -65,6 +65,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation(project(":autoconfigure"))
 
+    testImplementation("com.github.dasniko:testcontainers-keycloak:3.7.0")
     testImplementation("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")

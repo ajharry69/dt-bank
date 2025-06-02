@@ -23,6 +23,7 @@ public class TestcontainersConfiguration {
     @Bean
     @RestartScope
     @ServiceConnection(name = "redis")
+    @ConditionalOnProperty(name = "application.config.redis.enabled", havingValue = "true")
     GenericContainer<?> redisContainer() {
         return new GenericContainer<>(DockerImageName.parse("redis:8.0-alpine")).withExposedPorts(6379);
     }

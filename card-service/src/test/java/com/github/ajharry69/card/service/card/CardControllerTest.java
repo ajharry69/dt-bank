@@ -1,5 +1,6 @@
 package com.github.ajharry69.card.service.card;
 
+import com.github.ajharry69.card.IntegrationTest;
 import com.github.ajharry69.card.TestcontainersConfiguration;
 import com.github.ajharry69.card.service.card.data.CardFilter;
 import com.github.ajharry69.card.service.card.data.CardRepository;
@@ -7,6 +8,7 @@ import com.github.ajharry69.card.service.card.models.Card;
 import com.github.ajharry69.card.service.card.models.CardType;
 import com.github.ajharry69.card.service.card.models.dtos.CreateCardRequest;
 import com.github.ajharry69.card.service.card.models.dtos.UpdateCardRequest;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -25,6 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -40,12 +47,25 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import({TestcontainersConfiguration.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
-class CardControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(value = {"test"})
+@Testcontainers
+class CardControllerTest extends IntegrationTest {
     private static final Faker faker = new Faker();
+    @Container
+    static KeycloakContainer keycloak = new KeycloakContainer()
+            .withRealmImportFile("/realm.json");
     @Autowired
     private CardRepository repository;
     private Card card;
+
+    @DynamicPropertySource
+    static void keycloakProperties(DynamicPropertyRegistry registry) {
+        registry.add(
+                "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                () -> keycloak.getAuthServerUrl() + "/realms/dt-bank"
+        );
+    }
 
     private static String alias() {
         return faker.funnyName().name();
@@ -110,6 +130,7 @@ class CardControllerTest {
             String cvv = cvv();
             CardType type = type();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CreateCardRequest.builder()
@@ -145,6 +166,7 @@ class CardControllerTest {
         )
         void shouldReturnBadRequestForInvalidCard(String alias, String pan) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CreateCardRequest.builder()
@@ -174,6 +196,7 @@ class CardControllerTest {
             String pan = pan();
             String cvv = cvv();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             UpdateCardRequest.builder()
@@ -200,6 +223,7 @@ class CardControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCardId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             UpdateCardRequest.builder()
@@ -227,6 +251,7 @@ class CardControllerTest {
         )
         void shouldReturnBadRequestForInvalidCard(String alias, String pan) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             UpdateCardRequest.builder()
@@ -252,6 +277,7 @@ class CardControllerTest {
         @ValueSource(booleans = {true, false})
         void shouldReturnCard(boolean unmask) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/cards/{cardId}", validCardDetailRequest());
 
@@ -271,6 +297,7 @@ class CardControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCardId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/cards/{cardId}", invalidCardDetailRequest());
 
@@ -288,6 +315,7 @@ class CardControllerTest {
         @Test
         void shouldReturnCard() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/cards/{cardId}", validCardDetailRequest());
 
@@ -302,6 +330,7 @@ class CardControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCardId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/cards/{cardId}", invalidCardDetailRequest());
 
@@ -425,6 +454,7 @@ class CardControllerTest {
             });
 
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .queryParams(queryParams(filter))
                     .get("/api/v1/cards");

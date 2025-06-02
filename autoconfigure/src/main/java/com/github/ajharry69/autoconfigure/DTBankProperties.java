@@ -6,11 +6,17 @@ import org.springframework.validation.annotation.Validated;
 
 @ConfigurationProperties(prefix = "application.config")
 @Validated
-public record DTBankProperties(Zipkin zipkin, RabbitMq rabbitMq, Gateway gateway) {
+public record DTBankProperties(Zipkin zipkin, RabbitMq rabbitMq, Keycloak keycloak, Redis redis, Gateway gateway) {
     record RabbitMq(boolean enabled) {
     }
 
     record Zipkin(boolean enabled) {
+    }
+
+    record Redis(boolean enabled) {
+    }
+
+    record Keycloak(boolean enabled) {
     }
 
     @Validated

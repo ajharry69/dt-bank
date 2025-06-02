@@ -1,4 +1,4 @@
-package com.github.ajharry69.gateway.security;
+package com.github.ajharry69.autoconfigure;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class JWTAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
-    private static final Logger log = LoggerFactory.getLogger(JWTAuthConverter.class);
+public class OAuth2JwtAuthenticationTokenConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+    private static final Logger log = LoggerFactory.getLogger(OAuth2JwtAuthenticationTokenConverter.class);
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
 
     @Override

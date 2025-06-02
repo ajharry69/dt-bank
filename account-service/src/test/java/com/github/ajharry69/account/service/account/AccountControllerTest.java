@@ -1,10 +1,12 @@
 package com.github.ajharry69.account.service.account;
 
+import com.github.ajharry69.account.IntegrationTest;
 import com.github.ajharry69.account.TestcontainersConfiguration;
 import com.github.ajharry69.account.service.account.data.AccountFilter;
 import com.github.ajharry69.account.service.account.data.AccountRepository;
 import com.github.ajharry69.account.service.account.models.Account;
 import com.github.ajharry69.account.service.account.models.dtos.AccountRequest;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -23,6 +25,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -40,13 +46,26 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @Import({TestcontainersConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles(value = {"test"})
-class AccountControllerTest {
+@Testcontainers
+class AccountControllerTest extends IntegrationTest {
     private static final Faker faker = new Faker();
     private static final String iban = iban();
     private static final String bicSwift = bicSwift();
+    @Container
+    static KeycloakContainer keycloak = new KeycloakContainer()
+            .withRealmImportFile("/realm.json");
     @Autowired
     private AccountRepository repository;
     private Account account;
+
+    @DynamicPropertySource
+    static void keycloakProperties(DynamicPropertyRegistry registry) {
+//        keycloak.start();
+        registry.add(
+                "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                () -> keycloak.getAuthServerUrl() + "/realms/dt-bank"
+        );
+    }
 
     private static String iban() {
         return faker.finance().iban();
@@ -97,6 +116,7 @@ class AccountControllerTest {
             String iban = iban();
             String bicSwift = bicSwift();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
@@ -128,6 +148,7 @@ class AccountControllerTest {
         )
         void shouldReturnBadRequestForInvalidAccount(String iban, String bicSwift) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
@@ -154,6 +175,7 @@ class AccountControllerTest {
             String iban = iban();
             String bicSwift = bicSwift();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
@@ -178,6 +200,7 @@ class AccountControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidAccountId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
@@ -205,6 +228,7 @@ class AccountControllerTest {
         )
         void shouldReturnBadRequestForInvalidAccount(String iban, String bicSwift) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             AccountRequest.builder()
@@ -229,6 +253,7 @@ class AccountControllerTest {
         @Test
         void shouldReturnAccount() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
@@ -246,6 +271,7 @@ class AccountControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidAccountId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
 
@@ -263,6 +289,7 @@ class AccountControllerTest {
         @Test
         void shouldReturnAccount() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
@@ -277,6 +304,7 @@ class AccountControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidAccountId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
 
@@ -394,6 +422,7 @@ class AccountControllerTest {
             });
 
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .queryParams(queryParams(filter))
                     .get("/api/v1/accounts");

@@ -1,10 +1,12 @@
 package com.github.ajharry69.customer.service.customer;
 
+import com.github.ajharry69.customer.IntegrationTest;
 import com.github.ajharry69.customer.TestcontainersConfiguration;
 import com.github.ajharry69.customer.service.customer.data.CustomerFilter;
 import com.github.ajharry69.customer.service.customer.data.CustomerRepository;
 import com.github.ajharry69.customer.service.customer.models.Customer;
 import com.github.ajharry69.customer.service.customer.models.dtos.CustomerRequest;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -22,6 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -37,12 +44,25 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @Import({TestcontainersConfiguration.class})
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties = "spring.profiles.active=test")
-class CustomerControllerTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles(value = {"test"})
+@Testcontainers
+class CustomerControllerTest extends IntegrationTest {
     private static final Faker faker = new Faker();
+    @Container
+    static KeycloakContainer keycloak = new KeycloakContainer()
+            .withRealmImportFile("/realm.json");
     @Autowired
     private CustomerRepository repository;
     private Customer customer;
+
+    @DynamicPropertySource
+    static void keycloakProperties(DynamicPropertyRegistry registry) {
+        registry.add(
+                "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                () -> keycloak.getAuthServerUrl() + "/realms/dt-bank"
+        );
+    }
 
     private static String firstName() {
         return faker.name().firstName();
@@ -91,6 +111,7 @@ class CustomerControllerTest {
             String firstName = firstName();
             String lastName = lastName();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
@@ -120,6 +141,7 @@ class CustomerControllerTest {
         )
         void shouldReturnBadRequestForInvalidCustomer(String firstName, String lastName) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
@@ -145,6 +167,7 @@ class CustomerControllerTest {
             String firstName = firstName();
             String lastName = lastName();
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
@@ -168,6 +191,7 @@ class CustomerControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCustomerId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(
                             CustomerRequest.builder()
@@ -194,6 +218,7 @@ class CustomerControllerTest {
         )
         void shouldReturnBadRequestForInvalidCustomer(String firstName, String lastName) {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .contentType(ContentType.JSON)
                     .body(CustomerRequest.builder().firstName(firstName).lastName(lastName).build())
                     .put("/api/v1/customers/{customerId}", validCustomerDetailRequest());
@@ -212,6 +237,7 @@ class CustomerControllerTest {
         @Test
         void shouldReturnCustomer() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
@@ -229,6 +255,7 @@ class CustomerControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCustomerId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .get("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
 
@@ -246,6 +273,7 @@ class CustomerControllerTest {
         @Test
         void shouldReturnCustomer() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
@@ -260,6 +288,7 @@ class CustomerControllerTest {
         @Test
         void shouldReturnNotFoundForInvalidCustomerId() {
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .delete("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
 
@@ -369,6 +398,7 @@ class CustomerControllerTest {
             });
 
             Response response = given()
+                    .auth().oauth2(getAccessToken())
                     .when()
                     .queryParams(queryParams(filter))
                     .get("/api/v1/customers");
