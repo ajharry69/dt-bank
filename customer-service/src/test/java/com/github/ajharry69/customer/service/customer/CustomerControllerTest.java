@@ -106,29 +106,57 @@ class CustomerControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "POST - /api/v1/customers")
     class CreateCustomer {
-        @Test
-        void shouldCreateCustomer() {
-            String firstName = firstName();
-            String lastName = lastName();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            CustomerRequest.builder()
-                                    .firstName(firstName)
-                                    .lastName(lastName).build()
-                    )
-                    .post("/api/v1/customers");
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String firstName = firstName();
+                String lastName = lastName();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CustomerRequest.builder()
+                                        .firstName(firstName)
+                                        .lastName(lastName).build()
+                        )
+                        .post("/api/v1/customers");
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("id", not(emptyOrNullString()))
-                    .body("firstName", equalTo(firstName))
-                    .body("lastName", equalTo(lastName))
-                    .body("otherName", nullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
+        }
+
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldCreateCustomer() {
+                String firstName = firstName();
+                String lastName = lastName();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CustomerRequest.builder()
+                                        .firstName(firstName)
+                                        .lastName(lastName).build()
+                        )
+                        .post("/api/v1/customers");
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .body("id", not(emptyOrNullString()))
+                        .body("firstName", equalTo(firstName))
+                        .body("lastName", equalTo(lastName))
+                        .body("otherName", nullValue());
+            }
         }
 
         @ParameterizedTest
@@ -162,50 +190,79 @@ class CustomerControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "PUT - /api/v1/customers/{customerId}")
     class UpdateCustomer {
-        @Test
-        void shouldUpdateCustomer() {
-            String firstName = firstName();
-            String lastName = lastName();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            CustomerRequest.builder()
-                                    .firstName(firstName)
-                                    .lastName(lastName)
-                                    .build()
-                    )
-                    .put("/api/v1/customers/{customerId}", validCustomerDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String firstName = firstName();
+                String lastName = lastName();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CustomerRequest.builder()
+                                        .firstName(firstName)
+                                        .lastName(lastName)
+                                        .build()
+                        )
+                        .put("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(customer.getId()))))
-                    .body("firstName", equalTo(firstName))
-                    .body("lastName", equalTo(lastName))
-                    .body("otherName", nullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidCustomerId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            CustomerRequest.builder()
-                                    .firstName(firstName())
-                                    .lastName(lastName())
-                                    .build()
-                    )
-                    .put("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldUpdateCustomer() {
+                String firstName = firstName();
+                String lastName = lastName();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CustomerRequest.builder()
+                                        .firstName(firstName)
+                                        .lastName(lastName)
+                                        .build()
+                        )
+                        .put("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(customer.getId()))))
+                        .body("firstName", equalTo(firstName))
+                        .body("lastName", equalTo(lastName))
+                        .body("otherName", nullValue());
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidCustomerId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CustomerRequest.builder()
+                                        .firstName(firstName())
+                                        .lastName(lastName())
+                                        .build()
+                        )
+                        .put("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
 
         @ParameterizedTest
@@ -270,33 +327,54 @@ class CustomerControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "DELETE - /api/v1/customers/{customerId}")
     class DeleteCustomer {
-        @Test
-        void shouldReturnCustomer() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/customers/{customerId}", validCustomerDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .when()
+                        .delete("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value())
-                    .body(anyOf(emptyString(), blankString()));
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidCustomerId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldReturnCustomer() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/customers/{customerId}", validCustomerDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value())
+                        .body(anyOf(emptyString(), blankString()));
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidCustomerId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/customers/{customerId}", invalidCustomerDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
     }
 

@@ -123,37 +123,71 @@ class CardControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "POST - /api/v1/cards")
     class CreateCard {
-        @Test
-        void shouldCreateCard() {
-            String alias = alias();
-            String pan = pan();
-            String cvv = cvv();
-            CardType type = type();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            CreateCardRequest.builder()
-                                    .alias(alias)
-                                    .pan(pan)
-                                    .cvv(cvv)
-                                    .type(type)
-                                    .accountId(UUID.randomUUID())
-                                    .build()
-                    )
-                    .post("/api/v1/cards");
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String alias = alias();
+                String pan = pan();
+                String cvv = cvv();
+                CardType type = type();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CreateCardRequest.builder()
+                                        .alias(alias)
+                                        .pan(pan)
+                                        .cvv(cvv)
+                                        .type(type)
+                                        .accountId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .post("/api/v1/cards");
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("id", not(emptyOrNullString()))
-                    .body("alias", equalTo(alias))
-                    .body("pan", equalTo("*************"))
-                    .body("cvv", equalTo("***"))
-                    .body("type", equalTo(type.name()))
-                    .body("accountId", notNullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
+        }
+
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldCreateCard() {
+                String alias = alias();
+                String pan = pan();
+                String cvv = cvv();
+                CardType type = type();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                CreateCardRequest.builder()
+                                        .alias(alias)
+                                        .pan(pan)
+                                        .cvv(cvv)
+                                        .type(type)
+                                        .accountId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .post("/api/v1/cards");
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .body("id", not(emptyOrNullString()))
+                        .body("alias", equalTo(alias))
+                        .body("pan", equalTo("*************"))
+                        .body("cvv", equalTo("***"))
+                        .body("type", equalTo(type.name()))
+                        .body("accountId", notNullValue());
+            }
         }
 
         @ParameterizedTest
@@ -190,55 +224,86 @@ class CardControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "PUT - /api/v1/cards/{cardId}")
     class UpdateCard {
-        @Test
-        void shouldUpdateCard() {
-            String alias = alias();
-            String pan = pan();
-            String cvv = cvv();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            UpdateCardRequest.builder()
-                                    .alias(alias)
-                                    .pan(pan)
-                                    .cvv(cvv)
-                                    .build()
-                    )
-                    .put("/api/v1/cards/{cardId}", validCardDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String alias = alias();
+                String pan = pan();
+                String cvv = cvv();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                UpdateCardRequest.builder()
+                                        .alias(alias)
+                                        .pan(pan)
+                                        .cvv(cvv)
+                                        .build()
+                        )
+                        .put("/api/v1/cards/{cardId}", validCardDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(card.getId()))))
-                    .body("alias", equalTo(alias))
-                    .body("pan", equalTo("*************"))
-                    .body("cvv", equalTo("***"))
-                    .body("type", equalTo(card.getType().name()))
-                    .body("accountId", notNullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidCardId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            UpdateCardRequest.builder()
-                                    .alias(alias())
-                                    .pan(pan())
-                                    .cvv(cvv())
-                                    .build()
-                    )
-                    .put("/api/v1/cards/{cardId}", invalidCardDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldUpdateCard() {
+                String alias = alias();
+                String pan = pan();
+                String cvv = cvv();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                UpdateCardRequest.builder()
+                                        .alias(alias)
+                                        .pan(pan)
+                                        .cvv(cvv)
+                                        .build()
+                        )
+                        .put("/api/v1/cards/{cardId}", validCardDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(card.getId()))))
+                        .body("alias", equalTo(alias))
+                        .body("pan", equalTo("*************"))
+                        .body("cvv", equalTo("***"))
+                        .body("type", equalTo(card.getType().name()))
+                        .body("accountId", notNullValue());
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidCardId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                UpdateCardRequest.builder()
+                                        .alias(alias())
+                                        .pan(pan())
+                                        .cvv(cvv())
+                                        .build()
+                        )
+                        .put("/api/v1/cards/{cardId}", invalidCardDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
 
         @ParameterizedTest
@@ -312,33 +377,54 @@ class CardControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "DELETE - /api/v1/cards/{cardId}")
     class DeleteCard {
-        @Test
-        void shouldReturnCard() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/cards/{cardId}", validCardDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .when()
+                        .delete("/api/v1/cards/{cardId}", validCardDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value())
-                    .body(anyOf(emptyString(), blankString()));
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidCardId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/cards/{cardId}", invalidCardDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldReturnCard() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/cards/{cardId}", validCardDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value())
+                        .body(anyOf(emptyString(), blankString()));
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidCardId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/cards/{cardId}", invalidCardDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
     }
 

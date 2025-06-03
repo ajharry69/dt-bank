@@ -22,6 +22,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -54,6 +55,7 @@ public class AccountController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_account.read')")
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
             @ModelAttribute AccountFilter filter,
             Pageable pageable
@@ -98,6 +100,7 @@ public class AccountController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_account.create')")
     public ResponseEntity<EntityModel<AccountResponse>> createAccount(@RequestBody @Valid AccountRequest account) {
         AccountResponse response = service.createAccount(account);
         AccountAssembler assembler = new AccountAssembler();
@@ -135,6 +138,7 @@ public class AccountController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_account.read')")
     public ResponseEntity<EntityModel<AccountResponse>> getAccount(
             @PathVariable
             UUID accountId) {
@@ -184,6 +188,7 @@ public class AccountController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_account.update')")
     public ResponseEntity<EntityModel<AccountResponse>> updateAccount(
             @PathVariable
             UUID accountId,
@@ -224,6 +229,7 @@ public class AccountController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_account.delete')")
     public ResponseEntity<?> deleteAccount(
             @PathVariable
             UUID accountId) {

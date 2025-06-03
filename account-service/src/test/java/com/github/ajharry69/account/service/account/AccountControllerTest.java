@@ -111,31 +111,61 @@ class AccountControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "POST - /api/v1/accounts")
     class CreateAccount {
-        @Test
-        void shouldCreateAccount() {
-            String iban = iban();
-            String bicSwift = bicSwift();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            AccountRequest.builder()
-                                    .iban(iban)
-                                    .bicSwift(bicSwift)
-                                    .customerId(UUID.randomUUID())
-                                    .build()
-                    )
-                    .post("/api/v1/accounts");
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String iban = iban();
+                String bicSwift = bicSwift();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                AccountRequest.builder()
+                                        .iban(iban)
+                                        .bicSwift(bicSwift)
+                                        .customerId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .post("/api/v1/accounts");
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.CREATED.value())
-                    .body("id", not(emptyOrNullString()))
-                    .body("iban", equalTo(iban))
-                    .body("bicSwift", equalTo(bicSwift))
-                    .body("customerId", notNullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
+        }
+
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldCreateAccount() {
+                String iban = iban();
+                String bicSwift = bicSwift();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                AccountRequest.builder()
+                                        .iban(iban)
+                                        .bicSwift(bicSwift)
+                                        .customerId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .post("/api/v1/accounts");
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .body("id", not(emptyOrNullString()))
+                        .body("iban", equalTo(iban))
+                        .body("bicSwift", equalTo(bicSwift))
+                        .body("customerId", notNullValue());
+            }
         }
 
         @ParameterizedTest
@@ -170,52 +200,82 @@ class AccountControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "PUT - /api/v1/accounts/{accountId}")
     class UpdateAccount {
-        @Test
-        void shouldUpdateAccount() {
-            String iban = iban();
-            String bicSwift = bicSwift();
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            AccountRequest.builder()
-                                    .iban(iban)
-                                    .bicSwift(bicSwift)
-                                    .customerId(UUID.randomUUID())
-                                    .build()
-                    )
-                    .put("/api/v1/accounts/{accountId}", validAccountDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                String iban = iban();
+                String bicSwift = bicSwift();
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                AccountRequest.builder()
+                                        .iban(iban)
+                                        .bicSwift(bicSwift)
+                                        .customerId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .put("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.OK.value())
-                    .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(account.getId()))))
-                    .body("iban", equalTo(iban))
-                    .body("bicSwift", equalTo(bicSwift))
-                    .body("customerId", notNullValue());
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidAccountId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .contentType(ContentType.JSON)
-                    .body(
-                            AccountRequest.builder()
-                                    .iban(iban())
-                                    .bicSwift(bicSwift())
-                                    .customerId(UUID.randomUUID())
-                                    .build()
-                    )
-                    .put("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldUpdateAccount() {
+                String iban = iban();
+                String bicSwift = bicSwift();
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                AccountRequest.builder()
+                                        .iban(iban)
+                                        .bicSwift(bicSwift)
+                                        .customerId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .put("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .body("id", allOf(not(emptyOrNullString()), equalTo(String.valueOf(account.getId()))))
+                        .body("iban", equalTo(iban))
+                        .body("bicSwift", equalTo(bicSwift))
+                        .body("customerId", notNullValue());
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidAccountId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .contentType(ContentType.JSON)
+                        .body(
+                                AccountRequest.builder()
+                                        .iban(iban())
+                                        .bicSwift(bicSwift())
+                                        .customerId(UUID.randomUUID())
+                                        .build()
+                        )
+                        .put("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
 
         @ParameterizedTest
@@ -286,33 +346,54 @@ class AccountControllerTest extends IntegrationTest {
     @Nested
     @DisplayName(value = "DELETE - /api/v1/accounts/{accountId}")
     class DeleteAccount {
-        @Test
-        void shouldReturnAccount() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/accounts/{accountId}", validAccountDetailRequest());
+        @Nested
+        class AccessDenied {
+            @Test
+            void shouldDeny() {
+                Response response = given()
+                        .auth().oauth2(getAccessToken())
+                        .when()
+                        .delete("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NO_CONTENT.value())
-                    .body(anyOf(emptyString(), blankString()));
+                response
+                        .then()
+                        .statusCode(HttpStatus.FORBIDDEN.value())
+                        .body("errorCode", equalTo("ACCESS_DENIED"));
+            }
         }
 
-        @Test
-        void shouldReturnNotFoundForInvalidAccountId() {
-            Response response = given()
-                    .auth().oauth2(getAccessToken())
-                    .when()
-                    .delete("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
+        @Nested
+        class AccessGranted {
+            @Test
+            void shouldReturnAccount() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/accounts/{accountId}", validAccountDetailRequest());
 
-            response.prettyPrint();
+                response.prettyPrint();
 
-            response
-                    .then()
-                    .statusCode(HttpStatus.NOT_FOUND.value());
+                response
+                        .then()
+                        .statusCode(HttpStatus.NO_CONTENT.value())
+                        .body(anyOf(emptyString(), blankString()));
+            }
+
+            @Test
+            void shouldReturnNotFoundForInvalidAccountId() {
+                Response response = given()
+                        .auth().oauth2(getAdminAccessToken())
+                        .when()
+                        .delete("/api/v1/accounts/{accountId}", invalidAccountDetailRequest());
+
+                response.prettyPrint();
+
+                response
+                        .then()
+                        .statusCode(HttpStatus.NOT_FOUND.value());
+            }
         }
     }
 

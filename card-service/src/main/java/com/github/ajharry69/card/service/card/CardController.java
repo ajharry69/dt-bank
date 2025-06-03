@@ -22,6 +22,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -54,6 +55,7 @@ public class CardController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_card.read')")
     public PagedModel<EntityModel<CardResponse>> getCards(
             @ModelAttribute CardFilter filter,
             Pageable pageable
@@ -98,6 +100,7 @@ public class CardController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_card.create')")
     public ResponseEntity<EntityModel<CardResponse>> createCard(@RequestBody @Valid CreateCardRequest card) {
         CardResponse response = service.createCard(card);
         CardAssembler assembler = new CardAssembler();
@@ -135,6 +138,7 @@ public class CardController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_card.read')")
     public ResponseEntity<EntityModel<CardResponse>> getCard(
             @PathVariable
             UUID cardId,
@@ -187,6 +191,7 @@ public class CardController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_card.update')")
     public ResponseEntity<EntityModel<CardResponse>> updateCard(
             @PathVariable
             UUID cardId,
@@ -227,6 +232,7 @@ public class CardController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_card.delete')")
     public ResponseEntity<?> deleteCard(
             @PathVariable
             UUID cardId) {

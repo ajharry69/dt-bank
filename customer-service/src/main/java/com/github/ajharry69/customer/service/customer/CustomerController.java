@@ -21,6 +21,7 @@ import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -53,6 +54,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_customer.read')")
     public PagedModel<EntityModel<CustomerResponse>> getCustomers(
             @ModelAttribute CustomerFilter filter,
             Pageable pageable
@@ -97,6 +99,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_customer.create')")
     public ResponseEntity<EntityModel<CustomerResponse>> createCustomer(@RequestBody @Valid CustomerRequest customer) {
         CustomerResponse response = service.createCustomer(customer);
         CustomerAssembler assembler = new CustomerAssembler();
@@ -134,6 +137,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_customer.read')")
     public ResponseEntity<EntityModel<CustomerResponse>> getCustomer(
             @PathVariable
             UUID customerId) {
@@ -183,6 +187,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_customer.update')")
     public ResponseEntity<EntityModel<CustomerResponse>> updateCustomer(
             @PathVariable
             UUID customerId,
@@ -223,6 +228,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasAuthority('SCOPE_customer.delete')")
     public ResponseEntity<?> deleteCustomer(
             @PathVariable
             UUID customerId) {

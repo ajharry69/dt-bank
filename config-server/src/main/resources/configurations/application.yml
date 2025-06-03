@@ -38,7 +38,21 @@ spring:
           keycloak:
             client-id: test-client
             client-secret: test-secret
-            scope: openid
+            scope:
+              - offline_access
+              - openid
+              - customer.read
+              - card.update
+              - card.delete
+              - account.update
+              - account.delete
+              - customer.create
+              - card.read
+              - account.read
+              - customer.update
+              - card.create
+              - customer.delete
+              - account.create
         provider:
           keycloak:
             issuer-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
