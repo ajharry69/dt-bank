@@ -61,13 +61,13 @@ class DTBAutoConfiguration {
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(
-                                (_, _, ex) -> {
+                                (x, y, ex) -> {
                                     log.debug("Access Denied: {}", ex.getMessage(), ex);
                                     throw new DTBAccessDeniedException();
                                 }
                         )
                         .authenticationEntryPoint(
-                                (_, _, ex) -> {
+                                (x, y, ex) -> {
                                     log.debug("Authentication failed: {}", ex.getMessage(), ex);
                                     throw new DTBAuthenticationFailedException();
                                 }

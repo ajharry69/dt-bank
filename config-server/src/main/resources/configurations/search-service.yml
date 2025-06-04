@@ -1,0 +1,7 @@
+server:
+  port: 8120
+springdoc:
+  api-docs:
+    path: /search-service/v3/api-docs
+  swagger-ui:
+    path: /search-service/swagger-ui.html

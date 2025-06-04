@@ -4,8 +4,11 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     java
     jacoco
-    id("org.springframework.boot") version "3.4.5" apply false
+    id("org.springframework.boot") version "3.4.6" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
+    kotlin("jvm") version "1.9.25" apply false
+    kotlin("plugin.spring") version "1.9.25" apply false
+    id("org.graalvm.buildtools.native") version "0.10.6" apply false
 }
 
 extra["springCloudVersion"] = "2024.0.1"
