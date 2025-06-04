@@ -31,8 +31,8 @@ public class DTBFeignClientConfig {
                 log.info("Using authentication credentials from the security context...");
 
                 var credentials = authentication.getCredentials();
-                if (credentials instanceof Jwt) {
-                    credentials = ((Jwt) credentials).getTokenValue();
+                if (authentication.getCredentials() instanceof Jwt token) {
+                    credentials = token.getTokenValue();
                 }
                 authorizationHeaderValue = "Bearer " + credentials;
             } else {
