@@ -1,0 +1,289 @@
+{
+  "realm": "dt-bank",
+  "enabled": true,
+  "registrationAllowed": true,
+  "clients": [
+    {
+      "clientId": "test-client",
+      "secret": "test-secret",
+      "enabled": true,
+      "publicClient": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": [
+        "openid",
+        "email",
+        "profile",
+        "roles",
+        "web-origins"
+      ],
+      "optionalClientScopes": [
+        "account.create",
+        "account.read",
+        "account.update",
+        "account.delete",
+        "card.create",
+        "card.read",
+        "card.update",
+        "card.delete",
+        "customer.create",
+        "customer.read",
+        "customer.update",
+        "customer.delete",
+        "offline_access"
+      ],
+      "attributes": {
+        "access.token.lifespan": "300"
+      },
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "testuser",
+      "firstName": "Test",
+      "lastName": "User",
+      "email": "testuser@example.com",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "clientRoles": {
+      },
+      "realmRoles": [
+        "default-roles-dt-bank",
+        "USER"
+      ],
+      "groups": []
+    },
+    {
+      "username": "adminuser",
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "adminuser@example.com",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "adminpass"
+        }
+      ],
+      "realmRoles": [
+        "default-roles-dt-bank",
+        "ADMIN"
+      ],
+      "groups": []
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN",
+        "description": "Administrator role"
+      },
+      {
+        "name": "USER",
+        "description": "Regular user role"
+      }
+    ],
+    "client": {
+    }
+  },
+  "clientScopes": [
+    {
+      "name": "customer.create",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Create Customers"
+      }
+    },
+    {
+      "name": "customer.read",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Read Customer Details"
+      }
+    },
+    {
+      "name": "customer.update",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Update Customer Details"
+      }
+    },
+    {
+      "name": "customer.delete",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Delete Customer Details"
+      }
+    },
+    {
+      "name": "account.create",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Create Customer Accounts"
+      }
+    },
+    {
+      "name": "account.read",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Read Customer Account Details"
+      }
+    },
+    {
+      "name": "account.update",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Update Customer Account Details"
+      }
+    },
+    {
+      "name": "account.delete",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Delete Customer Account Details"
+      }
+    },
+    {
+      "name": "card.create",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Create Account Cards"
+      }
+    },
+    {
+      "name": "card.read",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Read Account Card Details"
+      }
+    },
+    {
+      "name": "card.update",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Update Account Card Details"
+      }
+    },
+    {
+      "name": "card.delete",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true",
+        "consent.screen.text": "Delete Account Card Details"
+      }
+    }
+  ],
+  "scopeMappings": [
+    {
+      "clientScope": "customer.create",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "customer.read",
+      "roles": [
+        "ADMIN",
+        "USER"
+      ]
+    },
+    {
+      "clientScope": "customer.update",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "customer.delete",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "account.create",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "account.read",
+      "roles": [
+        "ADMIN",
+        "USER"
+      ]
+    },
+    {
+      "clientScope": "account.update",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "account.delete",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "card.create",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "card.read",
+      "roles": [
+        "ADMIN",
+        "USER"
+      ]
+    },
+    {
+      "clientScope": "card.update",
+      "roles": [
+        "ADMIN"
+      ]
+    },
+    {
+      "clientScope": "card.delete",
+      "roles": [
+        "ADMIN"
+      ]
+    }
+  ]
+}
