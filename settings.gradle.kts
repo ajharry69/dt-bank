@@ -8,4 +8,5 @@ include(
     ":customer-service",
     ":discovery-service",
     ":gateway",
+    ":search-service",
 )
