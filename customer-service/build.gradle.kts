@@ -1,29 +1,4 @@
-import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
-
-plugins {
-    java
-    id("org.springframework.boot") version "3.4.5"
-    id("io.spring.dependency-management") version "1.1.5"
-}
-
-group = "com.github.ajharry69"
 version = "0.0.1-SNAPSHOT"
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
-}
-
-repositories {
-    mavenCentral()
-}
 
 extra["springCloudVersion"] = "2024.0.1"
 extra["mapstructVersion"] = "1.6.3"
@@ -80,12 +55,4 @@ dependencies {
     testImplementation("net.datafaker:datafaker:2.4.3")
     testImplementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-
-tasks.withType<BootBuildImage> {
-    imageName.set("ghcr.io/${project.name}:${project.version}")
 }
