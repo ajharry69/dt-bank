@@ -40,6 +40,7 @@ dependencies {
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation(project(":autoconfigure"))
 
     testImplementation("com.github.dasniko:testcontainers-keycloak:3.7.0")
