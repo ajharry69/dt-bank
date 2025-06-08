@@ -29,13 +29,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build and run tests
-        # Use --continue to run all tests even if one module fails
-        # Use --no-daemon for CI environments
-        # Use --build-cache for faster builds
-        # Use --parallel for parallel execution
-        # The 'build' task includes 'test' and 'jacocoTestReport' by default if plugins are applied
-        run: ./gradlew build --exclude-task :gateway:test --continue --no-daemon --build-cache --parallel
+      - name: Build
+        run: ./gradlew build --exclude-task test --continue --no-daemon --build-cache --parallel
+
+      - name: Run tests
+        run: ./gradlew test --exclude-task :gateway:test --continue --no-daemon --build-cache
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
