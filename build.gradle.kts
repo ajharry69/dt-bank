@@ -41,8 +41,10 @@ subprojects {
 
     tasks.withType<JacocoReport> {
         reports {
+            csv.required.set(true)
+            csv.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/results.csv"))
             xml.required.set(true)
-            xml.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/xml/index.xml"))
+            xml.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/results.xml"))
             html.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/html"))
         }
     }
