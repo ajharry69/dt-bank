@@ -2,6 +2,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     java
+    jacoco
     id("org.springframework.boot") version "3.4.5" apply false
     id("io.spring.dependency-management") version "1.1.5" apply false
 }
@@ -17,6 +18,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "jacoco")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
 
@@ -34,6 +36,15 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    tasks.withType<JacocoReport> {
+        reports {
+            xml.required.set(true)
+            xml.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/xml/index.xml"))
+            html.outputLocation.set(File(rootDir, "build/reports/jacoco/${project.name}/html"))
+        }
     }
 
     tasks.withType<BootBuildImage> {
