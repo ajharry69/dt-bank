@@ -1,0 +1,102 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and run tests
+        # Use --continue to run all tests even if one module fails
+        # Use --no-daemon for CI environments
+        # Use --build-cache for faster builds
+        # Use --parallel for parallel execution
+        # The 'build' task includes 'test' and 'jacocoTestReport' by default if plugins are applied
+        run: ./gradlew build --exclude-task :gateway:test --continue --no-daemon --build-cache --parallel
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            build/reports/jacoco/**/xml/*.xml
+            build/reports/jacoco/**/html/*.html
+          retention-days: 5
+
+      - name: Upload Coverage Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            build/reports/jacoco/**/xml/index.xml # XML report for tools/services
+            build/reports/jacoco/**/html/ # HTML reports for human viewing
+          retention-days: 5
+
+  cd:
+    if: "startsWith(github.ref, 'refs/tags/')"
+    needs: ci
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+
+      - name: Build and push Docker images
+        # Explicitly list application modules to build images for.
+        # Exclude library modules like 'autoconfigure'.
+        # Use --no-daemon, --build-cache, --parallel for efficiency.
+        run: |
+          ./gradlew bootBuildImage --no-daemon --build-cache --parallel
