@@ -1,6 +1,3 @@
-extra["springCloudVersion"] = "2024.0.1"
-extra["mapstructVersion"] = "1.6.3"
-
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
@@ -34,14 +31,14 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:${property("mapstructVersion")}")
     testAnnotationProcessor("org.mapstruct:mapstruct-processor:${property("mapstructVersion")}")
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springDocVersion")}")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation(project(":autoconfigure"))
 
-    testImplementation("com.github.dasniko:testcontainers-keycloak:3.7.0")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:${property("keycloakVersion")}")
     testImplementation("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
@@ -50,8 +47,8 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.testcontainers:rabbitmq")
-    testImplementation("io.rest-assured:rest-assured:5.3.2")
-    testImplementation("net.datafaker:datafaker:2.4.3")
+    testImplementation("io.rest-assured:rest-assured:${property("restAssuredVersion")}")
+    testImplementation("net.datafaker:datafaker:${property("datafakerVersion")}")
     testImplementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -7,6 +7,13 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5" apply false
 }
 
+extra["springCloudVersion"] = "2024.0.1"
+extra["mapstructVersion"] = "1.6.3"
+extra["springDocVersion"] = "2.7.0"
+extra["keycloakVersion"] = "3.7.0"
+extra["restAssuredVersion"] = "5.3.2"
+extra["datafakerVersion"] = "2.4.3"
+
 allprojects {
     group = "com.github.ajharry69"
     version = "1.0.1"

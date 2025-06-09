@@ -1,5 +1,3 @@
-extra["springCloudVersion"] = "2024.0.1"
-
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
