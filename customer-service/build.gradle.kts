@@ -1,5 +1,3 @@
-version = "0.0.1-SNAPSHOT"
-
 extra["springCloudVersion"] = "2024.0.1"
 extra["mapstructVersion"] = "1.6.3"
 
