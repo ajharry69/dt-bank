@@ -49,6 +49,5 @@ dependencies {
     testImplementation("org.testcontainers:rabbitmq")
     testImplementation("io.rest-assured:rest-assured:${property("restAssuredVersion")}")
     testImplementation("net.datafaker:datafaker:${property("datafakerVersion")}")
-    testImplementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
