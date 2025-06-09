@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/ajharry69/kyosk-test:v1.2.0
+          env:
+            - name: SPRING_DATA_MONGODB_HOST
+              value: "kyosk-mongodb.default.svc.cluster.local"
+            - name: SPRING_DATA_MONGODB_AUTHENTICATIONDATABASE
+              value: admin
+            - name: SPRING_DATA_MONGODB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: database-config
+                  key: database.dbname
+            - name: SPRING_DATA_MONGODB_USERNAME
+              valueFrom:
+#                secretKeyRef:
+#                  name: database-credentials
+#                  key: database-username
+                configMapKeyRef:
+                  name: database-config
+                  key: database.username
+            - name: SPRING_DATA_MONGODB_PASSWORD
+              valueFrom:
+#                secretKeyRef:
+#                  name: database-credentials
+#                  key: database-password
+                configMapKeyRef:
+                  name: database-config
+                  key: database.password

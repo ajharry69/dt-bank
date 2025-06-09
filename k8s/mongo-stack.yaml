@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-credentials
+data:
+  database-username: 'a3lvc2sK'
+  database-password: 'cGFzc3dvcmQK'
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config
+data:
+  database.dbname: 'kyosk'
+  database.username: 'kyosk'
+  database.password: 'password'
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-db-config
+data:
+  init.js: |
+    db = db.getSiblingDB('kyosk');
+
+    db.books.insertMany([
+        {title: "The Hitchhiker's Guide to the Galaxy", id: "978-0345391803"},
+        {
+            title: "Pride and Prejudice", id: "978-0141439518"
+        },
+        {
+            title: "To Kill a Mockingbird", id: "978-0060935467"
+        }
+    ]);
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: mongodb
+spec:
+    serviceName: kyosk-mongodb
+    selector:
+        matchLabels:
+            app: mongodb
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                app: mongodb
+        spec:
+            containers:
+                - name: mongodb
+                  image: mongo:8.0-rc-jammy
+                  env:
+                    - name: MONGO_INITDB_DATABASE
+                      valueFrom:
+                        configMapKeyRef:
+                          name: database-config
+                          key: database.dbname
+                    - name: MONGO_INITDB_ROOT_USERNAME
+                      valueFrom:
+#                        secretKeyRef:
+#                          name: database-credentials
+#                          key: database-username
+                        configMapKeyRef:
+                          name: database-config
+                          key: database.username
+                    - name: MONGO_INITDB_ROOT_PASSWORD
+                      valueFrom:
+#                        secretKeyRef:
+#                          name: database-credentials
+#                          key: database-password
+                        configMapKeyRef:
+                          name: database-config
+                          key: database.password
+                  volumeMounts:
+                      - name: mongo-persistent-storage
+                        mountPath: /data/db
+                      - name: init-db-volume
+                        mountPath: /docker-entrypoint-initdb.d/
+            volumes:
+                - name: mongo-persistent-storage
+                  persistentVolumeClaim:
+                      claimName: kyosk-mongo-pvc
+                - name: init-db-volume
+                  configMap:
+                    name: init-db-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: kyosk-mongodb
+spec:
+    type: ClusterIP
+    selector:
+        app: mongodb
+    ports:
+        - name: mongoport
+          port: 27017
