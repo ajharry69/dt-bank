@@ -51,5 +51,11 @@ subprojects {
 
     tasks.withType<BootBuildImage> {
         imageName.set("ghcr.io/ajharry69/${project.name}:${project.version}")
+        docker {
+            publishRegistry {
+                username.set("ajharry69")
+                password.set(System.getenv("GITHUB_TOKEN"))
+            }
+        }
     }
 }
