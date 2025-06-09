@@ -96,7 +96,7 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} ./gradlew bootBuildImage \
+          GITHUB_ACTOR=${{github.actor}} GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} ./gradlew bootBuildImage \
             --continue \
             --no-daemon \
             --build-cache \

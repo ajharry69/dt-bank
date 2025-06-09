@@ -53,8 +53,8 @@ subprojects {
         imageName.set("ghcr.io/ajharry69/${project.name}:${project.version}")
         docker {
             publishRegistry {
-                username.set("ajharry69")
-                password.set(System.getenv("GITHUB_TOKEN"))
+                System.getenv("GITHUB_ACTOR")?.let<String, Unit>(username::set)
+                System.getenv("GITHUB_TOKEN")?.let<String, Unit>(password::set)
             }
         }
     }
