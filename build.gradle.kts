@@ -50,11 +50,12 @@ subprojects {
     }
 
     tasks.withType<BootBuildImage> {
-        imageName.set("ghcr.io/ajharry69/${project.name}:${project.version}")
+        val username = System.getenv("GITHUB_ACTOR") ?: "ajharry69"
+        imageName.set("ghcr.io/$username/${project.name}:${project.version}")
         docker {
             publishRegistry {
-                System.getenv("GITHUB_ACTOR")?.let<String, Unit>(username::set)
-                System.getenv("GITHUB_TOKEN")?.let<String, Unit>(password::set)
+                this.username.set(username)
+                System.getenv("GITHUB_TOKEN")?.let(password::set)
             }
         }
     }
