@@ -33,13 +33,15 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springDocVersion")}")
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation(project(":autoconfigure"))
 
-    testImplementation("com.github.dasniko:testcontainers-keycloak:${property("keycloakVersion")}")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-devtools")
+    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    testImplementation("org.springframework.boot:spring-boot-docker-compose")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:${property("keycloakVersion")}")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.springframework.amqp:spring-rabbit-test")

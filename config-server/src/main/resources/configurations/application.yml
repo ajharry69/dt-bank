@@ -1,7 +1,7 @@
 application:
   config:
     gateway:
-      url: http://localhost:8080
+      url: "http://localhost:8080"
 management:
   tracing:
     sampling:
@@ -31,6 +31,17 @@ management:
 server:
   forward-headers-strategy: framework
 spring:
+  docker:
+    compose:
+      file:
+        - compose.ide.yaml
+      skip:
+        in-tests: false
+      stop:
+        command: down
+  datasource:
+    username: "${spring.flyway.user}"
+    password: "${spring.flyway.password}"
   security:
     oauth2:
       client:
@@ -55,10 +66,10 @@ spring:
               - account.create
         provider:
           keycloak:
-            issuer-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
+            issuer-uri: "${spring.security.oauth2.resourceserver.jwt.issuer-uri}"
       resourceserver:
         jwt:
-          issuer-uri: ${OAUTH2_BASE_URL:http://localhost:8180}/realms/dt-bank
+          issuer-uri: "http://localhost:8180/realms/dt-bank"
   threads:
     virtual:
       enabled: true

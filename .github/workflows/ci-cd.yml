@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
+    tags: [ "v*.*.*" ]
   pull_request:
     branches: [ "main" ]
 
@@ -17,18 +17,18 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '24'
-          cache: 'gradle'
+          distribution: "temurin"
+          java-version: "24"
+          cache: "gradle"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build
-        run: ./gradlew build --exclude-task test --continue --no-daemon --build-cache --parallel
+        run: make build
 
       - name: Run tests
-        run: ./gradlew test --exclude-task :gateway:test --continue --no-daemon --build-cache --info
+        run: make test
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -61,9 +61,9 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '24'
-          cache: 'gradle'
+          distribution: "temurin"
+          java-version: "24"
+          cache: "gradle"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -76,9 +76,4 @@ jobs:
           GITHUB_ACTOR: ${{github.actor}}
           GITHUB_TOKEN: ${{secrets.GHCR_TOKEN}}
         run: |
-          ./gradlew bootBuildImage \
-            --continue \
-            --no-daemon \
-            --build-cache \
-            --parallel \
-            --publishImage
+          make build-and-push-images

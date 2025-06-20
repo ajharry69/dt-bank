@@ -1,4 +1,5 @@
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     java
@@ -56,11 +57,17 @@ subprojects {
         }
     }
 
+    tasks.withType<BootRun> {
+        jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+    }
+
     tasks.withType<BootBuildImage> {
         builder.set("paketobuildpacks/builder-jammy-full")
 
+        val isComposeImage = (System.getenv("COMPOSE_IMAGE") ?: "false").lowercase() in setOf("true", "yes", "1")
         val username = System.getenv("GITHUB_ACTOR") ?: "ajharry69"
-        imageName.set("ghcr.io/$username/${project.name}:${project.version}")
+        val version = if (isComposeImage) "compose" else project.version
+        imageName.set("ghcr.io/$username/${project.name}:$version")
 
         environment.putAll(
             mapOf(

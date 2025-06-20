@@ -1,6 +1,6 @@
 *.zip
-*compose.*.yml
-*compose.*.yaml
+compose.override.yml
+compose.override.yaml
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar

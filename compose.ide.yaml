@@ -1,0 +1,32 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_FEATURES: "preview,docker"
+    volumes:
+      - ./gateway/src/test/resources/realm.json:/opt/keycloak/data/import/realm.json:ro
+    command: start-dev --import-realm
+
+  rabbitmq:
+    image: "rabbitmq:4.1-alpine"
+    environment:
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: guest
+    ports:
+      - "5672:5672"
+
+  zipkin:
+    image: "openzipkin/zipkin:3.5"
+    ports:
+      - "9411:9411"
+
+  redis:
+    image: redis:8.0-alpine
+    ports:
+      - "6379:6379"

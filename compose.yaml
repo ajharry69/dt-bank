@@ -7,39 +7,34 @@ services:
       driver: fluentd
       options:
         fluentd-address: 127.0.0.1:24224
-    image: quay.io/keycloak/keycloak:24.0.4
-    ports:
-      - "8180:8080"
+    extends:
+      file: compose.ide.yaml
+      service: keycloak
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    volumes:
-      - ./gateway/src/test/resources/realm.json:/opt/keycloak/data/import/realm.json:ro
-    command: start-dev --import-realm
+      KC_HOSTNAME: host.docker.internal
+      KC_HOSTNAME_PORT: 8180
+      KC_HOSTNAME_STRICT: false
 
   rabbitmq:
     depends_on: *fb-depends-on
     logging: *fb-logging
-    image: "rabbitmq:4.1-alpine"
-    environment:
-      RABBITMQ_DEFAULT_PASS: guest
-      RABBITMQ_DEFAULT_USER: guest
-    ports:
-      - "5672:5672"
+    extends:
+      file: compose.ide.yaml
+      service: rabbitmq
     volumes:
       - mq_data:/var/lib/rabbitmq
 
   zipkin:
-    image: "openzipkin/zipkin:3.5"
-    ports:
-      - "9411:9411"
+    extends:
+      file: compose.ide.yaml
+      service: zipkin
 
   redis:
     depends_on: *fb-depends-on
     logging: *fb-logging
-    image: redis:8.0-alpine
-    ports:
-      - "6379:6379"
+    extends:
+      file: compose.ide.yaml
+      service: redis
 
   fluent-bit:
     image: grafana/fluent-bit-plugin-loki:3.5
@@ -67,10 +62,7 @@ services:
   grafana:
     image: grafana/grafana:12.0.1
     environment:
-      #GF_AUTH_DISABLE_LOGIN_FORM: true
-      #GF_AUTH_ANONYMOUS_ENABLED: true
-      #GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_SECURITY_ADMIN_USER: user
+      GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: password
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1" ]
@@ -120,6 +112,92 @@ services:
       - "4317:4317"   # otlp grpc
     volumes:
       - ./observability/tempo/tempo.yml:/etc/tempo.yml:ro
+
+  account-service-database: &db
+    image: postgres:17-alpine
+    healthcheck:
+      test: "psql test test --command=\"SELECT 1;\""
+      interval: 5s
+      timeout: 15s
+      retries: 5
+    environment:
+      POSTGRES_DB: "test"
+      POSTGRES_USER: "test"
+      POSTGRES_PASSWORD: "test"
+
+  card-service-database: *db
+
+  customer-service-database: *db
+
+  config-server:
+    image: ghcr.io/ajharry69/config-server:compose
+    logging: *fb-logging
+    depends_on:
+      rabbitmq:
+        condition: service_started
+    healthcheck: &spring-healthcheck
+      test: curl -s http://localhost:8080/actuator/health | grep -q -w status || exit 1
+      interval: 5s
+      timeout: 1s
+      retries: 10
+    environment:
+      SERVER_PORT: "8080"
+
+  discovery-service:
+    image: ghcr.io/ajharry69/discovery-service:compose
+    logging: *fb-logging
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck: *spring-healthcheck
+    environment: &application-environment
+      SPRING_PROFILES_ACTIVE: "compose"
+      CONFIG_SERVER_URL: "http://config-server:8080"
+
+  account-service:
+    image: ghcr.io/ajharry69/account-service:compose
+    logging: *fb-logging
+    depends_on:
+      discovery-service: &discovery-service-depends-on
+        condition: service_healthy
+      account-service-database:
+        condition: service_healthy
+    healthcheck: *spring-healthcheck
+    environment: *application-environment
+
+  card-service:
+    image: ghcr.io/ajharry69/card-service:compose
+    logging: *fb-logging
+    depends_on:
+      discovery-service: *discovery-service-depends-on
+      card-service-database:
+        condition: service_healthy
+    healthcheck: *spring-healthcheck
+    environment: *application-environment
+
+  customer-service:
+    image: ghcr.io/ajharry69/customer-service:compose
+    logging: *fb-logging
+    depends_on:
+      discovery-service: *discovery-service-depends-on
+      customer-service-database:
+        condition: service_healthy
+    healthcheck: *spring-healthcheck
+    environment: *application-environment
+
+  gateway:
+    image: ghcr.io/ajharry69/gateway:compose
+    logging: *fb-logging
+    depends_on:
+      account-service:
+        condition: service_healthy
+      card-service:
+        condition: service_healthy
+      customer-service:
+        condition: service_healthy
+    environment: *application-environment
+    ports:
+      - "8080:8080"
 
 volumes:
   mq_data:

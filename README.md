@@ -110,15 +110,15 @@ These services support the microservices architecture.
 
 This section outlines how to run the entire platform locally.
 
-### Starting core services
+### Using docker compose
 
 The following command starts all the services that are used internally by microservices.
 
 ```bash
-docker compose up
+make compose
 ```
 
-### Build and Run Microservices
+### Using test containers and Spring boot compose integration
 
 Locate and run the main applications referenced in the following list.
 
