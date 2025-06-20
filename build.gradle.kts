@@ -59,6 +59,14 @@ subprojects {
     tasks.withType<BootBuildImage> {
         val username = System.getenv("GITHUB_ACTOR") ?: "ajharry69"
         imageName.set("ghcr.io/$username/${project.name}:${project.version}")
+
+        environment.putAll(
+            mapOf(
+                "BP_OCI_LICENSES" to "Apache-2.0",
+                "BP_OCI_SOURCE" to "https://github.com/$username/dt-bank",
+            ),
+        )
+
         docker {
             publishRegistry {
                 this.username.set(username)
