@@ -62,6 +62,7 @@ subprojects {
 
         environment.putAll(
             mapOf(
+                "BP_JVM_VERSION" to java.toolchain.languageVersion.get().toString(),
                 "BP_OCI_LICENSES" to "Apache-2.0",
                 "BP_OCI_SOURCE" to "https://github.com/$username/dt-bank",
             ),
