@@ -57,6 +57,8 @@ subprojects {
     }
 
     tasks.withType<BootBuildImage> {
+        builder.set("paketobuildpacks/builder-jammy-full")
+
         val username = System.getenv("GITHUB_ACTOR") ?: "ajharry69"
         imageName.set("ghcr.io/$username/${project.name}:${project.version}")
 
