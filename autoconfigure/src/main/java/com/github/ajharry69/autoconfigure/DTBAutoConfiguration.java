@@ -6,6 +6,7 @@ import com.github.ajharry69.exceptions.DTBException;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.slf4j.Logger;
@@ -85,15 +86,18 @@ class DTBAutoConfiguration {
         var openIdConnectUrl = jwtIssuerUrl + "/.well-known/openid-configuration";
         var gateway = properties.gateway();
         var url = gateway != null ? gateway.url() : "http://localhost:8080";
+        final String securitySchemeName = "OAuth2";
+
         return new OpenAPI()
                 .info(new Info()
                         .title(name + " API")
                         .version("v1")
                         .description("API documentation for " + name))
                 .servers(List.of(new Server().url(url)))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(
                         new Components().addSecuritySchemes(
-                                "OAuth2",
+                                securitySchemeName,
                                 new SecurityScheme()
                                         .in(SecurityScheme.In.HEADER)
                                         .type(SecurityScheme.Type.OPENIDCONNECT)
