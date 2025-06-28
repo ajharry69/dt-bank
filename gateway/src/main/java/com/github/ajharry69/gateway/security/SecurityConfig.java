@@ -12,8 +12,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.authorization.ServerAccessDeniedHandler;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -30,22 +28,6 @@ public class SecurityConfig {
 
     public SecurityConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-    }
-
-    @Bean
-    public ServerAuthenticationEntryPoint authenticationEntryPoint() {
-        return (exchange, ex) -> {
-            log.debug("Authentication failed: {}", ex.getMessage());
-            return writeErrorResponse(exchange, HttpStatus.UNAUTHORIZED, "AUTHENTICATION_FAILED");
-        };
-    }
-
-    @Bean
-    public ServerAccessDeniedHandler accessDeniedHandler() {
-        return (exchange, ex) -> {
-            log.debug("Access Denied: {}", ex.getMessage());
-            return writeErrorResponse(exchange, HttpStatus.FORBIDDEN, "ACCESS_DENIED");
-        };
     }
 
     private Mono<Void> writeErrorResponse(ServerWebExchange exchange, HttpStatus status, String errorCode) {
@@ -84,10 +66,11 @@ public class SecurityConfig {
                         .pathMatchers(
                                 "/favicon.ico",
                                 "/actuator/**",
-                                "/swagger-ui/**",
                                 "/swagger-ui.html",
+                                "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/*/v3/api-docs/**"
+                                "/*/v3/api-docs",
+                                "/webjars/**"
                         )
                         .permitAll()
                         .anyExchange()
@@ -97,8 +80,18 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
 //                .oauth2Login(Customizer.withDefaults())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedHandler(accessDeniedHandler())
-                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(
+                                (exchange, ex) -> {
+                                    log.debug("Access Denied: {}", ex.getMessage());
+                                    return writeErrorResponse(exchange, HttpStatus.FORBIDDEN, "ACCESS_DENIED");
+                                }
+                        )
+                        .authenticationEntryPoint(
+                                (exchange, ex) -> {
+                                    log.debug("Authentication failed: {}", ex.getMessage());
+                                    return writeErrorResponse(exchange, HttpStatus.UNAUTHORIZED, "AUTHENTICATION_FAILED");
+                                }
+                        )
                 )
                 .build();
     }

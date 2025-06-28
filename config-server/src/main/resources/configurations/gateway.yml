@@ -8,9 +8,9 @@ spring:
         enabled: true
       discovery:
         locator:
-          enabled: true
+          enabled: false
+          lower-case-service-id: true
       default-filters:
-        - SaveSession
         - TokenRelay
         - name: RequestRateLimiter
           args:
@@ -22,7 +22,7 @@ spring:
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
-            - Path=/api/v1/customers**, /api/v1/customers/**, /customer-service/v3/api-docs
+            - Path=/api/v1/customers/**
           filters:
             - AddRequestHeader=X-Tenant,acme
             - AddResponseHeader=X-Genre,fantasy
@@ -41,7 +41,7 @@ spring:
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
           predicates:
-            - Path=/api/v1/accounts**, /api/v1/accounts/**, /account-service/v3/api-docs
+            - Path=/api/v1/accounts/**
           filters:
             - AddRequestHeader=X-Tenant,acme
             - AddResponseHeader=X-Genre,fantasy
@@ -60,7 +60,7 @@ spring:
         - id: card-service
           uri: lb://CARD-SERVICE
           predicates:
-            - Path=/api/v1/cards**, /api/v1/cards/**, /card-service/v3/api-docs
+            - Path=/api/v1/cards/**
           filters:
             - AddRequestHeader=X-Tenant,acme
             - AddResponseHeader=X-Genre,fantasy
@@ -75,6 +75,28 @@ spring:
                 backoff:
                   firstBackoff: 50ms
                   maxBackoff: 500ms
+
+        - id: customer-service-docs
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+            - Path=/customer-service/v3/api-docs
+          filters:
+            - StripPrefix=1
+
+        - id: account-service-docs
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/account-service/v3/api-docs
+          filters:
+            - StripPrefix=1
+
+        - id: card-service-docs
+          uri: lb://CARD-SERVICE
+          predicates:
+            - Path=/card-service/v3/api-docs
+          filters:
+            - StripPrefix=1
+
 
 resilience4j:
   circuitbreaker:
