@@ -1,0 +1,18 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - ../../base
+patches:
+    - path: fluent-bit-service.yaml
+    - path: gateway-service.yaml
+    - path: grafana-service.yaml
+    - path: keycloak-service.yaml
+    - path: loki-service.yaml
+    - path: prometheus-service.yaml
+    - path: rabbitmq-mq_data-persistentVolumeClaim.yaml
+    - path: rabbitmq-service.yaml
+    - path: redis-service.yaml
+    - path: tempo-service.yaml
+    - path: zipkin-service.yaml

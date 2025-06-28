@@ -1,0 +1,21 @@
+#! loki-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: loki-published
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: loki
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: loki
+    ports:
+        - name: loki-3100
+          port: 3100
+          protocol: TCP
+          targetPort: loki-3100
+
+# check if there is at least one published port

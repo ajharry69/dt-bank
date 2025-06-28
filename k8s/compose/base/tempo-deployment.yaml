@@ -1,0 +1,54 @@
+#! tempo-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: tempo
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: tempo
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: tempo
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: tempo
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: tempo
+                  image: grafana/tempo:2.8.0-rc.1
+                  imagePullPolicy: IfNotPresent
+                  command: [-config.file=/etc/tempo.yml]
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - wget --quiet --tries=1 --spider http://localhost:3200/api/echo || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 1
+                    failureThreshold: 10
+                  ports:
+                    - name: tempo-3200
+                      containerPort: 3200
+                    - name: tempo-4318
+                      containerPort: 4318
+                    - name: tempo-4317
+                      containerPort: 4317
+                  volumeMounts:
+                    - name: etc-tempo-yml
+                      mountPath: /etc/tempo.yml
+                      readOnly: true
+            volumes:
+                - name: etc-tempo-yml
+                  hostPath:
+                    path: /repos/dt-bank/observability/tempo/tempo.yml

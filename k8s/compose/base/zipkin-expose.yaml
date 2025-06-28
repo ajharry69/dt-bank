@@ -1,0 +1,21 @@
+#! zipkin-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: zipkin
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: zipkin
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: zipkin
+    ports:
+        - name: zipkin-9410
+          port: 9410
+          targetPort: zipkin-9410
+        - name: zipkin-9411
+          port: 9411
+          targetPort: zipkin-9411

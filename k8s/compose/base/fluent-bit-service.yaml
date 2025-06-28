@@ -1,0 +1,23 @@
+# check if there is at least one published port
+
+#! fluent-bit-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: fluent-bit-published
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: fluent-bit
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: fluent-bit
+    ports:
+        - name: fluent-bi-24224
+          port: 24224
+          protocol: TCP
+          targetPort: fluent-bi-24224
+
+# check if there is at least one published port

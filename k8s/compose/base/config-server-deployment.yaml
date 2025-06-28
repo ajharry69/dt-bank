@@ -1,0 +1,41 @@
+#! config-server-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: config-server
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: config-server
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: config-server
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: config-server
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: config-server
+                  image: ghcr.io/ajharry69/config-server:compose
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: SERVER_PORT
+                      value: "8080"
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - curl -s http://localhost:8080/actuator/health | grep -q -w status || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 5
+                    failureThreshold: 10

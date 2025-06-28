@@ -1,0 +1,29 @@
+#! tempo-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: tempo-published
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: tempo
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: tempo
+    ports:
+        - name: tempo-3200
+          port: 3200
+          protocol: TCP
+          targetPort: tempo-3200
+        - name: tempo-4318
+          port: 4318
+          protocol: TCP
+          targetPort: tempo-4318
+        - name: tempo-4317
+          port: 4317
+          protocol: TCP
+          targetPort: tempo-4317
+
+# check if there is at least one published port

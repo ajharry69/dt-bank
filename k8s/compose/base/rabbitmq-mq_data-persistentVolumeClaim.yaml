@@ -1,0 +1,18 @@
+#! rabbitmq-mq_data-persistentVolumeClaim.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: rabbitmq-mq-data
+    namespace: dt-bank
+    labels:
+        com.docker.compose.service: rabbitmq
+        com.docker.compose.volume: mq_data
+spec:
+    accessModes:
+        # TODO would need to check which services use this volume
+        - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+        requests:
+            storage: 100Mi

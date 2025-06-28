@@ -1,0 +1,21 @@
+#! rabbitmq-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: rabbitmq-published
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: rabbitmq
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: rabbitmq
+    ports:
+        - name: rabbitmq-5672
+          port: 5672
+          protocol: TCP
+          targetPort: rabbitmq-5672
+
+# check if there is at least one published port

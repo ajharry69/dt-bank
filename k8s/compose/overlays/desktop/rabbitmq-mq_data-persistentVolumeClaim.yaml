@@ -1,0 +1,9 @@
+#! rabbitmq-mq_data-persistentVolumeClaim.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: rabbitmq-mq-data
+    namespace: dt-bank
+spec:
+    storageClassName: "hostpath" # see docker/desktop-storage-provisioner

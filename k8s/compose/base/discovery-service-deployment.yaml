@@ -1,0 +1,43 @@
+#! discovery-service-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: discovery-service
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: discovery-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: discovery-service
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: discovery-service
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: discovery-service
+                  image: ghcr.io/ajharry69/discovery-service:compose
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: CONFIG_SERVER_URL
+                      value: "http://config-server:8080"
+                    - name: SPRING_PROFILES_ACTIVE
+                      value: "compose"
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - curl -s http://localhost:8080/actuator/health | grep -q -w status || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 5
+                    failureThreshold: 10

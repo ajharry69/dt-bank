@@ -1,0 +1,21 @@
+#! fluent-bit-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: fluent-bit
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: fluent-bit
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: fluent-bit
+    ports:
+        - name: fluent-bit-2020
+          port: 2020
+          targetPort: fluent-bit-2020
+        - name: fluent-bi-24224
+          port: 24224
+          targetPort: fluent-bi-24224

@@ -1,0 +1,18 @@
+#! account-service-database-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: account-service-database
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: account-service-database
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: account-service-database
+    ports:
+        - name: account-se-5432
+          port: 5432
+          targetPort: account-se-5432

@@ -1,0 +1,50 @@
+#! prometheus-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: prometheus
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: prometheus
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: prometheus
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: prometheus
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: prometheus
+                  image: prom/prometheus:v3.4.1
+                  imagePullPolicy: IfNotPresent
+                  command: [--enable-feature=exemplar-storage --web.enable-remote-write-receiver --config.file=/etc/prometheus/prometheus.yml]
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - wget --quiet --tries=1 --spider http://localhost:9090/-/healthy || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 1
+                    failureThreshold: 10
+                  ports:
+                    - name: prometheus-9090
+                      containerPort: 9090
+                  volumeMounts:
+                    - name: etc-prometheus-prometheus-yml
+                      mountPath: /etc/prometheus/prometheus.yml
+                      readOnly: true
+            volumes:
+                - name: etc-prometheus-prometheus-yml
+                  hostPath:
+                    path: /repos/dt-bank/observability/prometheus/prometheus.yml

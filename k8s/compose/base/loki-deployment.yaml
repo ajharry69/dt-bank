@@ -1,0 +1,49 @@
+#! loki-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: loki
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: loki
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: loki
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: loki
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: loki
+                  image: grafana/loki:3.5
+                  imagePullPolicy: IfNotPresent
+                  command: [-config.file=/etc/loki/local-config.yaml]
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - wget --quiet --tries=1 --output-document=- http://localhost:3100/ready | grep -q -w ready || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 1
+                    failureThreshold: 10
+                  ports:
+                    - name: loki-3100
+                      containerPort: 3100
+                  volumeMounts:
+                    - name: etc-loki-local-config-yaml
+                      mountPath: /etc/loki/local-config.yaml
+            volumes:
+                - name: etc-loki-local-config-yaml
+                  hostPath:
+                    path: /repos/dt-bank/observability/loki/local-config.yaml
