@@ -45,10 +45,10 @@ class DTBAutoConfiguration {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.requestMatchers(
                                         "/actuator/**",
-                                        "/swagger-ui.html",
                                         "/swagger-ui/**",
+                                        "/swagger-ui.html",
                                         "/v3/api-docs/**",
-                                        "/webjars/**"
+                                        "/*/v3/api-docs/**"
                                 ).permitAll()
                                 .anyRequest()
                                 .authenticated()
