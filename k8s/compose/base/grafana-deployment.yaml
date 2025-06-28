@@ -1,0 +1,74 @@
+#! grafana-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: grafana
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: grafana
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: grafana
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: grafana
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: grafana
+                  image: grafana/grafana:12.0.1
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: GF_AUTH_ANONYMOUS_ENABLED
+                      value: "true"
+                    - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+                      value: "Admin"
+                    - name: GF_AUTH_DISABLE_LOGIN_FORM
+                      value: "true"
+                    - name: GF_SECURITY_ADMIN_PASSWORD
+                      value: "password"
+                    - name: GF_SECURITY_ADMIN_USER
+                      value: "admin"
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - curl -f http://localhost:3000/api/health || exit 1
+                    periodSeconds: 5
+                    timeoutSeconds: 1
+                    failureThreshold: 10
+                  ports:
+                    - name: grafana-3000
+                      containerPort: 3000
+                  volumeMounts:
+                    - name: etc-grafana-provisioning-datasources-datasource-yml
+                      mountPath: /etc/grafana/provisioning/datasources/datasource.yml
+                    - name: etc-grafana-provisioning-dashboards-dashboard-yml
+                      mountPath: /etc/grafana/provisioning/dashboards/dashboard.yml
+                    - name: etc-grafana-dashboards
+                      mountPath: /etc/grafana/dashboards
+                    - name: etc-grafana-grafana-ini
+                      mountPath: /etc/grafana/grafana.ini
+            volumes:
+                - name: etc-grafana-provisioning-datasources-datasource-yml
+                  hostPath:
+                    path: /repos/dt-bank/observability/grafana/provisioning/datasources/datasource.yml
+                - name: etc-grafana-provisioning-dashboards-dashboard-yml
+                  hostPath:
+                    path: /repos/dt-bank/observability/grafana/provisioning/dashboards/dashboard.yml
+                - name: etc-grafana-dashboards
+                  hostPath:
+                    path: /repos/dt-bank/observability/grafana/dashboards
+                - name: etc-grafana-grafana-ini
+                  hostPath:
+                    path: /repos/dt-bank/observability/grafana/grafana.ini

@@ -1,0 +1,34 @@
+#! zipkin-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: zipkin
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: zipkin
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: zipkin
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: zipkin
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: zipkin
+                  image: openzipkin/zipkin:3.5
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                    - name: zipkin-9410
+                      containerPort: 9410
+                    - name: zipkin-9411
+                      containerPort: 9411

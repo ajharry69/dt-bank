@@ -1,0 +1,18 @@
+#! customer-service-database-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: customer-service-database
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: customer-service-database
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: customer-service-database
+    ports:
+        - name: customer-s-5432
+          port: 5432
+          targetPort: customer-s-5432

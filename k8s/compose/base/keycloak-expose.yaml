@@ -1,0 +1,21 @@
+#! keycloak-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: keycloak
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: keycloak
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: keycloak
+    ports:
+        - name: keycloak-8080
+          port: 8080
+          targetPort: keycloak-8080
+        - name: keycloak-8443
+          port: 8443
+          targetPort: keycloak-8443
