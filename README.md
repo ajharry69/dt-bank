@@ -118,9 +118,6 @@ The following command starts all the services that are used internally by micros
 make compose
 ```
 
-> **N/B:** Full integration with the standard [Swagger UI documentation](#api-documentation-swagger) is not yet
-> available when deploying with Docker Compose.
-
 ### Using test containers and Spring boot compose integration
 
 Locate and run the main applications referenced in the following list.
