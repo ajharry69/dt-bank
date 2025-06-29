@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     java
     jacoco
-    id("org.springframework.boot") version "3.4.5" apply false
+    id("org.springframework.boot") version "3.5.3" apply false
     id("io.spring.dependency-management") version "1.1.5" apply false
 }
 
