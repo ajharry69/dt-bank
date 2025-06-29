@@ -1,0 +1,33 @@
+#! rabbitmq-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: rabbitmq
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: rabbitmq
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: rabbitmq
+    ports:
+        - name: rabbitmq-5672
+          port: 5672
+          targetPort: rabbitmq-5672
+        - name: rabbitmq-15691
+          port: 15691
+          targetPort: rabbitmq-15691
+        - name: rabbitmq-15692
+          port: 15692
+          targetPort: rabbitmq-15692
+        - name: rabbitmq-25672
+          port: 25672
+          targetPort: rabbitmq-25672
+        - name: rabbitmq-4369
+          port: 4369
+          targetPort: rabbitmq-4369
+        - name: rabbitmq-5671
+          port: 5671
+          targetPort: rabbitmq-5671

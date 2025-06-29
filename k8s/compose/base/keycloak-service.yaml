@@ -1,0 +1,21 @@
+#! keycloak-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: keycloak-published
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: keycloak
+spec:
+    selector:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: keycloak
+    ports:
+        - name: keycloak-8180
+          port: 8180
+          protocol: TCP
+          targetPort: keycloak-8080
+
+# check if there is at least one published port

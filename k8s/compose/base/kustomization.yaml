@@ -1,0 +1,49 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - 0-dt-bank-namespace.yaml
+    - account-service-database-deployment.yaml
+    - account-service-database-expose.yaml
+    - account-service-deployment.yaml
+    - card-service-database-deployment.yaml
+    - card-service-database-expose.yaml
+    - card-service-deployment.yaml
+    - config-server-deployment.yaml
+    - customer-service-database-deployment.yaml
+    - customer-service-database-expose.yaml
+    - customer-service-deployment.yaml
+    - default-network-policy.yaml
+    - discovery-service-deployment.yaml
+    - fluent-bit-deployment.yaml
+    - fluent-bit-expose.yaml
+    - fluent-bit-service.yaml
+    - gateway-deployment.yaml
+    - gateway-expose.yaml
+    - gateway-service.yaml
+    - grafana-deployment.yaml
+    - grafana-expose.yaml
+    - grafana-service.yaml
+    - keycloak-deployment.yaml
+    - keycloak-expose.yaml
+    - keycloak-service.yaml
+    - loki-deployment.yaml
+    - loki-expose.yaml
+    - loki-service.yaml
+    - prometheus-deployment.yaml
+    - prometheus-expose.yaml
+    - prometheus-service.yaml
+    - rabbitmq-deployment.yaml
+    - rabbitmq-expose.yaml
+    - rabbitmq-mq_data-persistentVolumeClaim.yaml
+    - rabbitmq-service.yaml
+    - redis-deployment.yaml
+    - redis-expose.yaml
+    - redis-service.yaml
+    - tempo-deployment.yaml
+    - tempo-expose.yaml
+    - tempo-service.yaml
+    - zipkin-deployment.yaml
+    - zipkin-expose.yaml
+    - zipkin-service.yaml

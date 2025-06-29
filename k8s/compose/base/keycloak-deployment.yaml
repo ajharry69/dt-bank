@@ -1,0 +1,60 @@
+#! keycloak-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: keycloak
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: keycloak
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: keycloak
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: keycloak
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: keycloak
+                  image: quay.io/keycloak/keycloak:24.0.4
+                  imagePullPolicy: IfNotPresent
+                  command: [start-dev --import-realm]
+                  env:
+                    - name: KC_FEATURES
+                      value: "preview,docker"
+                    - name: KC_HEALTH_ENABLED
+                      value: "true"
+                    - name: KC_HOSTNAME
+                      value: "host.docker.internal"
+                    - name: KC_HOSTNAME_PORT
+                      value: "8180"
+                    - name: KC_HOSTNAME_STRICT
+                      value: "false"
+                    - name: KC_METRICS_ENABLED
+                      value: "true"
+                    - name: KEYCLOAK_ADMIN
+                      value: "admin"
+                    - name: KEYCLOAK_ADMIN_PASSWORD
+                      value: "admin"
+                  ports:
+                    - name: keycloak-8080
+                      containerPort: 8080
+                    - name: keycloak-8443
+                      containerPort: 8443
+                  volumeMounts:
+                    - name: opt-keycloak-data-import-realm-json
+                      mountPath: /opt/keycloak/data/import/realm.json
+                      readOnly: true
+            volumes:
+                - name: opt-keycloak-data-import-realm-json
+                  hostPath:
+                    path: /repos/dt-bank/gateway/src/test/resources/realm.json
