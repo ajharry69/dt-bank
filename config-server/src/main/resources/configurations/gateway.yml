@@ -8,12 +8,13 @@ spring:
         enabled: true
       discovery:
         locator:
-          enabled: true
+          enabled: false
+          lower-case-service-id: true
       default-filters:
-        - SaveSession
         - TokenRelay
         - name: RequestRateLimiter
           args:
+            key-resolver: "#{@userKeyResolver}"
             redis-rate-limiter:
               replenishRate: 10
               burstCapacity: 20

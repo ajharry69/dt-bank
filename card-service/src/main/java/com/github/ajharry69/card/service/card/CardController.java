@@ -1,5 +1,6 @@
 package com.github.ajharry69.card.service.card;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.card.service.card.data.CardFilter;
 import com.github.ajharry69.card.service.card.models.dtos.CardResponse;
 import com.github.ajharry69.card.service.card.models.dtos.CreateCardRequest;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +58,7 @@ public class CardController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_card.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.read"})
     public PagedModel<EntityModel<CardResponse>> getCards(
             @ModelAttribute CardFilter filter,
             Pageable pageable
@@ -101,6 +104,7 @@ public class CardController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_card.create')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.create"})
     public ResponseEntity<EntityModel<CardResponse>> createCard(@RequestBody @Valid CreateCardRequest card) {
         CardResponse response = service.createCard(card);
         CardAssembler assembler = new CardAssembler();
@@ -139,6 +143,7 @@ public class CardController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_card.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.read"})
     public ResponseEntity<EntityModel<CardResponse>> getCard(
             @PathVariable
             UUID cardId,
@@ -192,6 +197,7 @@ public class CardController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_card.update')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.update"})
     public ResponseEntity<EntityModel<CardResponse>> updateCard(
             @PathVariable
             UUID cardId,
@@ -233,6 +239,7 @@ public class CardController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_card.delete')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.delete"})
     public ResponseEntity<?> deleteCard(
             @PathVariable
             UUID cardId) {

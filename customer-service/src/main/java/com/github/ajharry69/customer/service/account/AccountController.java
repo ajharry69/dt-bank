@@ -1,5 +1,6 @@
 package com.github.ajharry69.customer.service.account;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.customer.service.account.data.AccountFilter;
 import com.github.ajharry69.customer.service.account.models.dtos.AccountResponse;
 import com.github.ajharry69.customer.service.account.models.dtos.CreateAccountRequest;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,7 @@ public class AccountController {
                     )
             }
     )
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.create"})
     public ResponseEntity<EntityModel<AccountResponse>> createAccount(
             @PathVariable UUID customerId,
             @RequestBody @Valid CreateAccountRequest request) {
@@ -91,6 +94,7 @@ public class AccountController {
                     )
             }
     )
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.read"})
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
             @PathVariable UUID customerId,
             @ModelAttribute AccountFilter filter,

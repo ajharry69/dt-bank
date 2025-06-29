@@ -1,11 +1,13 @@
 package com.github.ajharry69.autoconfigure;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.exceptions.DTBAccessDeniedException;
 import com.github.ajharry69.exceptions.DTBAuthenticationFailedException;
 import com.github.ajharry69.exceptions.DTBException;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.slf4j.Logger;
@@ -47,7 +49,8 @@ class DTBAutoConfiguration {
                                         "/actuator/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
-                                        "/v3/api-docs/**"
+                                        "/v3/api-docs/**",
+                                        "/*/v3/api-docs/**"
                                 ).permitAll()
                                 .anyRequest()
                                 .authenticated()
@@ -84,15 +87,17 @@ class DTBAutoConfiguration {
         var openIdConnectUrl = jwtIssuerUrl + "/.well-known/openid-configuration";
         var gateway = properties.gateway();
         var url = gateway != null ? gateway.url() : "http://localhost:8080";
+
         return new OpenAPI()
                 .info(new Info()
                         .title(name + " API")
                         .version("v1")
                         .description("API documentation for " + name))
                 .servers(List.of(new Server().url(url)))
+                .addSecurityItem(new SecurityRequirement().addList(SecuritySchemeName.OAUTH2))
                 .components(
                         new Components().addSecuritySchemes(
-                                "OAuth2",
+                                SecuritySchemeName.OAUTH2,
                                 new SecurityScheme()
                                         .in(SecurityScheme.In.HEADER)
                                         .type(SecurityScheme.Type.OPENIDCONNECT)

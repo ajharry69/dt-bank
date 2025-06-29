@@ -1,5 +1,6 @@
 package com.github.ajharry69.account.service.account;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.account.service.account.data.AccountFilter;
 import com.github.ajharry69.account.service.account.models.dtos.AccountRequest;
 import com.github.ajharry69.account.service.account.models.dtos.AccountResponse;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +58,7 @@ public class AccountController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_account.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.read"})
     public PagedModel<EntityModel<AccountResponse>> getAccounts(
             @ModelAttribute AccountFilter filter,
             Pageable pageable
@@ -101,6 +104,7 @@ public class AccountController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_account.create')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.create"})
     public ResponseEntity<EntityModel<AccountResponse>> createAccount(@RequestBody @Valid AccountRequest account) {
         AccountResponse response = service.createAccount(account);
         AccountAssembler assembler = new AccountAssembler();
@@ -139,6 +143,7 @@ public class AccountController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_account.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.read"})
     public ResponseEntity<EntityModel<AccountResponse>> getAccount(
             @PathVariable
             UUID accountId) {
@@ -189,6 +194,7 @@ public class AccountController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_account.update')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.update"})
     public ResponseEntity<EntityModel<AccountResponse>> updateAccount(
             @PathVariable
             UUID accountId,
@@ -230,6 +236,7 @@ public class AccountController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_account.delete')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"account.delete"})
     public ResponseEntity<?> deleteAccount(
             @PathVariable
             UUID accountId) {
