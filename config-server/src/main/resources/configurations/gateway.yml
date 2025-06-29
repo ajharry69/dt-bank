@@ -79,33 +79,31 @@ spring:
 
 resilience4j:
   circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        registerHealthIndicator: true
     instances:
       customer-service:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000
-        registerHealthIndicator: true
+        baseConfig: default
       account-service:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000
-        registerHealthIndicator: true
+        baseConfig: default
       card-service:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000
-        registerHealthIndicator: true
+        baseConfig: default
   timelimiter:
+    configs:
+      default:
+        timeoutDuration: 3s
     instances:
       customer-service:
-        timeoutDuration: 3s
+        baseConfig: default
       account-service:
-        timeoutDuration: 3s
+        baseConfig: default
       card-service:
-        timeoutDuration: 3s
+        baseConfig: default
 
 springdoc:
   enable-native-support: true
