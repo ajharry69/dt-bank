@@ -1,19 +1,21 @@
-.PHONY: help docker compose build test build-images build-and-push-images
+.PHONY: help destroy docker compose build test build-images build-and-push-images
 
 help: ## Display this help message.
 	@echo "Please use \`make <target>\` where <target> is one of:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; \
 	{printf "\033[36m%-40s\033[0m %s\n", $$1, $$2}'
 
-docker: ## Start docker compose services.
+destroy: ## Stop docker compose services.
 	docker compose down --volumes --remove-orphans
+
+docker: destroy ## Start docker compose services.
 	@until docker compose up --detach --build --remove-orphans; do\
 	    echo "\033[0;33mFailed to start container services! Retrying in 10s...\e[0m";\
     	sleep 10;\
     done
 
 compose: ## Build images and start docker compose services.
-	COMPOSE_IMAGE=true $(MAKE) build-images
+	IMAGE_VERSION=current $(MAKE) build-images
 	$(MAKE) docker
 
 build: ## Build project.

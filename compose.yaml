@@ -130,7 +130,7 @@ services:
   customer-service-database: *db
 
   config-server:
-    image: ghcr.io/ajharry69/config-server:compose
+    image: ghcr.io/ajharry69/config-server:current
     logging: *fb-logging
     depends_on:
       rabbitmq:
@@ -144,7 +144,7 @@ services:
       SERVER_PORT: "8080"
 
   discovery-service:
-    image: ghcr.io/ajharry69/discovery-service:compose
+    image: ghcr.io/ajharry69/discovery-service:current
     logging: *fb-logging
     depends_on:
       config-server:
@@ -155,7 +155,7 @@ services:
       CONFIG_SERVER_URL: "http://config-server:8080"
 
   account-service:
-    image: ghcr.io/ajharry69/account-service:compose
+    image: ghcr.io/ajharry69/account-service:current
     logging: *fb-logging
     depends_on:
       discovery-service: &discovery-service-depends-on
@@ -166,7 +166,7 @@ services:
     environment: *application-environment
 
   card-service:
-    image: ghcr.io/ajharry69/card-service:compose
+    image: ghcr.io/ajharry69/card-service:current
     logging: *fb-logging
     depends_on:
       discovery-service: *discovery-service-depends-on
@@ -176,7 +176,7 @@ services:
     environment: *application-environment
 
   customer-service:
-    image: ghcr.io/ajharry69/customer-service:compose
+    image: ghcr.io/ajharry69/customer-service:current
     logging: *fb-logging
     depends_on:
       discovery-service: *discovery-service-depends-on
@@ -186,7 +186,7 @@ services:
     environment: *application-environment
 
   gateway:
-    image: ghcr.io/ajharry69/gateway:compose
+    image: ghcr.io/ajharry69/gateway:current
     logging: *fb-logging
     depends_on:
       account-service:
