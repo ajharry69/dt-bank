@@ -64,9 +64,8 @@ subprojects {
     tasks.withType<BootBuildImage> {
         builder.set("paketobuildpacks/builder-jammy-full")
 
-        val isComposeImage = (System.getenv("COMPOSE_IMAGE") ?: "false").lowercase() in setOf("true", "yes", "1")
         val username = System.getenv("GITHUB_ACTOR") ?: "ajharry69"
-        val version = if (isComposeImage) "compose" else project.version
+        val version = System.getenv("IMAGE_VERSION") ?: project.version
         imageName.set("ghcr.io/$username/${project.name}:$version")
 
         environment.putAll(
