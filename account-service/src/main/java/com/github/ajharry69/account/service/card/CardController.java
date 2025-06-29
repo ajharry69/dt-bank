@@ -1,5 +1,6 @@
 package com.github.ajharry69.account.service.card;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.account.service.card.data.CardFilter;
 import com.github.ajharry69.account.service.card.models.dtos.CardResponse;
 import com.github.ajharry69.account.service.card.models.dtos.CreateCardRequest;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,7 @@ public class CardController {
                     )
             }
     )
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.create"})
     public ResponseEntity<EntityModel<CardResponse>> createCard(
             @PathVariable UUID accountId,
             @RequestBody @Valid CreateCardRequest request) {
@@ -91,6 +94,7 @@ public class CardController {
                     )
             }
     )
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"card.read"})
     public PagedModel<EntityModel<CardResponse>> getCards(
             @PathVariable UUID accountId,
             @ModelAttribute CardFilter filter,

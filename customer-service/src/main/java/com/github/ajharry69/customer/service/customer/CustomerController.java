@@ -1,5 +1,6 @@
 package com.github.ajharry69.customer.service.customer;
 
+import com.github.ajharry69.SecuritySchemeName;
 import com.github.ajharry69.customer.service.customer.data.CustomerFilter;
 import com.github.ajharry69.customer.service.customer.models.dtos.CustomerRequest;
 import com.github.ajharry69.customer.service.customer.models.dtos.CustomerResponse;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +57,7 @@ public class CustomerController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_customer.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"customer.read"})
     public PagedModel<EntityModel<CustomerResponse>> getCustomers(
             @ModelAttribute CustomerFilter filter,
             Pageable pageable
@@ -100,6 +103,7 @@ public class CustomerController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_customer.create')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"customer.create"})
     public ResponseEntity<EntityModel<CustomerResponse>> createCustomer(@RequestBody @Valid CustomerRequest customer) {
         CustomerResponse response = service.createCustomer(customer);
         CustomerAssembler assembler = new CustomerAssembler();
@@ -138,6 +142,7 @@ public class CustomerController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_customer.read')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"customer.read"})
     public ResponseEntity<EntityModel<CustomerResponse>> getCustomer(
             @PathVariable
             UUID customerId) {
@@ -188,6 +193,7 @@ public class CustomerController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_customer.update')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"customer.update"})
     public ResponseEntity<EntityModel<CustomerResponse>> updateCustomer(
             @PathVariable
             UUID customerId,
@@ -229,6 +235,7 @@ public class CustomerController {
             }
     )
     @PreAuthorize("hasAuthority('SCOPE_customer.delete')")
+    @SecurityRequirement(name = SecuritySchemeName.OAUTH2, scopes = {"customer.delete"})
     public ResponseEntity<?> deleteCustomer(
             @PathVariable
             UUID customerId) {
