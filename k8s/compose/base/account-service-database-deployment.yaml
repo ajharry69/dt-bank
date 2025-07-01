@@ -1,0 +1,48 @@
+#! account-service-database-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: account-service-database
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: account-service-database
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: account-service-database
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: account-service-database
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: account-service-database
+                  image: postgres:17-alpine
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: POSTGRES_DB
+                      value: "test"
+                    - name: POSTGRES_PASSWORD
+                      value: "test"
+                    - name: POSTGRES_USER
+                      value: "test"
+                  livenessProbe:
+                    exec:
+                        command:
+                            - /bin/sh
+                            - -c
+                            - psql test test --command="SELECT 1;"
+                    periodSeconds: 5
+                    timeoutSeconds: 15
+                    failureThreshold: 5
+                  ports:
+                    - name: account-se-5432
+                      containerPort: 5432

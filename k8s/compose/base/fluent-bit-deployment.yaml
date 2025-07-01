@@ -1,0 +1,44 @@
+#! fluent-bit-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fluent-bit
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: fluent-bit
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: fluent-bit
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: fluent-bit
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: fluent-bit
+                  image: grafana/fluent-bit-plugin-loki:3.5
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: LOKI_URL
+                      value: "http://loki:3100/loki/api/v1/push"
+                  ports:
+                    - name: fluent-bit-2020
+                      containerPort: 2020
+                    - name: fluent-bi-24224
+                      containerPort: 24224
+                  volumeMounts:
+                    - name: fluent-bit-etc-fluent-bit-conf
+                      mountPath: /fluent-bit/etc/fluent-bit.conf
+            volumes:
+                - name: fluent-bit-etc-fluent-bit-conf
+                  hostPath:
+                    path: /repos/dt-bank/observability/fluent-bit/fluent-bit.conf

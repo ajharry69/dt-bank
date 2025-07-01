@@ -1,0 +1,54 @@
+#! rabbitmq-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: rabbitmq
+    namespace: dt-bank
+    labels:
+        com.docker.compose.project: dt-bank
+        com.docker.compose.service: rabbitmq
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: dt-bank
+            com.docker.compose.service: rabbitmq
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: dt-bank
+                com.docker.compose.service: rabbitmq
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: rabbitmq
+                  image: rabbitmq:4.1-alpine
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: RABBITMQ_DEFAULT_PASS
+                      value: "guest"
+                    - name: RABBITMQ_DEFAULT_USER
+                      value: "guest"
+                  ports:
+                    - name: rabbitmq-5672
+                      containerPort: 5672
+                    - name: rabbitmq-15691
+                      containerPort: 15691
+                    - name: rabbitmq-15692
+                      containerPort: 15692
+                    - name: rabbitmq-25672
+                      containerPort: 25672
+                    - name: rabbitmq-4369
+                      containerPort: 4369
+                    - name: rabbitmq-5671
+                      containerPort: 5671
+                  volumeMounts:
+                    - name: var-lib-rabbitmq
+                      mountPath: /var/lib/rabbitmq
+            volumes:
+                - name: var-lib-rabbitmq
+                  persistentVolumeClaim:
+                    claimName: rabbitmq-mq-data
