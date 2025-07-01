@@ -118,6 +118,9 @@ The following command starts all the services that are used internally by micros
 make compose
 ```
 
+> **N/B:** To access the services as [documented](#api-documentation-swagger), replace `localhost` with
+`host.docker.internal`.
+
 ### Using test containers and Spring boot compose integration
 
 Locate and run the main applications referenced in the following list.

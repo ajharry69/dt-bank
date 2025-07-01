@@ -8,7 +8,14 @@ help: ## Display this help message.
 destroy: ## Stop docker compose services.
 	docker compose down --volumes --remove-orphans
 
-docker: destroy ## Start docker compose services.
+docker: ## Start docker compose services.
+	@echo "\033[0;33mUpdating hosts file if necessary...\e[0m"
+	@if ! grep -q -F "host.docker.internal" /etc/hosts; then\
+	  echo "127.0.0.1	host.docker.internal" | sudo tee -a /etc/hosts > /dev/null && echo "\033[0;32m✅ hosts file updated.\e[0m" || echo "\033[0;31m❌ Failed to update hosts file.\e[0m";\
+	else\
+	  echo "\033[0;32m✅ Entry already exists. No changes made.\e[0m";\
+	fi
+	$(MAKE) destroy
 	@until docker compose up --detach --build --remove-orphans; do\
 	    echo "\033[0;33mFailed to start container services! Retrying in 10s...\e[0m";\
     	sleep 10;\
