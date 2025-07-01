@@ -1,0 +1,67 @@
+# --- Customer Service Database ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: customer-db-pvc
+  namespace: dt-bank
+spec:
+  accessModes: [ "ReadWriteOnce" ] # This volume can be mounted by a single node
+  resources:
+    requests:
+      storage: 1Gi # Adjust size as needed
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service-database
+  namespace: dt-bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service-database
+  template:
+    metadata:
+      labels:
+        app: customer-service-database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "test"
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_USER } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_PASSWORD } }
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+          readinessProbe: # K8s equivalent of healthcheck
+            exec:
+              command: [ "pg_isready", "-U", "test", "-d", "test" ]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: customer-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service-database
+  namespace: dt-bank
+spec:
+  selector:
+    app: customer-service-database
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+# --- NOTE: Repeat the PVC, Deployment, and Service blocks above for ---
+# --- account-service-database and card-service-database,         ---
+# --- changing names accordingly (e.g., account-db-pvc).          ---
