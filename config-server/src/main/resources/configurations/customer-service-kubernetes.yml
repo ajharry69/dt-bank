@@ -1,0 +1,5 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: "jdbc:postgresql://customer-service-database.dt-bank.svc.cluster.local:5432/test"

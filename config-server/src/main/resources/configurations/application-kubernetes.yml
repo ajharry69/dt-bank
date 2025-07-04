@@ -5,17 +5,17 @@ application:
 eureka:
   client:
     service-url:
-      defaultZone: "http://discovery-service:8080/eureka/"
+      defaultZone: "http://discovery-service.dt-bank.svc.cluster.local:8080/eureka/"
 management:
   zipkin:
     tracing:
-      endpoint: "http://zipkin:9411/api/v2/spans"
+      endpoint: "http://zipkin.dt-bank.svc.cluster.local:9411/api/v2/spans"
 spring:
   data:
     redis:
-      host: "redis"
+      host: "redis.dt-bank.svc.cluster.local"
   rabbitmq:
-    host: "rabbitmq"
+    host: "rabbitmq.dt-bank.svc.cluster.local"
   flyway:
     user: "test"
     password: "test"

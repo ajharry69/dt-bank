@@ -1,8 +1,7 @@
-# --- Customer Service Database ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: customer-db-pvc
+  name: account-db-pvc
   namespace: dt-bank
 spec:
   accessModes: [ "ReadWriteOnce" ] # This volume can be mounted by a single node
@@ -13,17 +12,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer-service-database
+  name: account-service-database
   namespace: dt-bank
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: customer-service-database
+      app: account-service-database
   template:
     metadata:
       labels:
-        app: customer-service-database
+        app: account-service-database
     spec:
       containers:
         - name: postgres
@@ -48,20 +47,17 @@ spec:
       volumes:
         - name: db-storage
           persistentVolumeClaim:
-            claimName: customer-db-pvc
+            claimName: account-db-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: customer-service-database
+  name: account-service-database
   namespace: dt-bank
 spec:
   selector:
-    app: customer-service-database
+    app: account-service-database
+  type: ClusterIP
   ports:
     - port: 5432
       targetPort: 5432
-
-# --- NOTE: Repeat the PVC, Deployment, and Service blocks above for ---
-# --- account-service-database and card-service-database,         ---
-# --- changing names accordingly (e.g., account-db-pvc).          ---

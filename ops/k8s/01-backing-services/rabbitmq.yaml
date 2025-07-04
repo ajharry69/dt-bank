@@ -50,6 +50,7 @@ metadata:
 spec:
   selector:
     app: rabbitmq
+  type: ClusterIP
   ports:
     - name: amqp
       port: 5672
