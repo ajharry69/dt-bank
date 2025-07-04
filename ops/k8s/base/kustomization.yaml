@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - 00-namespace.yaml
+  # Backing Services
+  - 01-backing-services/rabbitmq.yaml
+  - 01-backing-services/redis.yaml
+  - 01-backing-services/zipkin.yaml
+  # Microservices (and their databases)
+  - 03-microservices/config-server/workloads.yaml
+  - 03-microservices/config-server/services.yaml
+  - 03-microservices/discovery-service/workloads.yaml
+  - 03-microservices/discovery-service/services.yaml
+  - 03-microservices/01-gateway/workloads.yaml
+  - 03-microservices/01-gateway/services.yaml
+  - 03-microservices/account/workloads.yaml
+  - 03-microservices/account/services.yaml
+  - 03-microservices/account/databases.yaml
+  - 03-microservices/card/workloads.yaml
+  - 03-microservices/card/services.yaml
+  - 03-microservices/card/databases.yaml
+  - 03-microservices/customer/workloads.yaml
+  - 03-microservices/customer/services.yaml
+  - 03-microservices/customer/databases.yaml

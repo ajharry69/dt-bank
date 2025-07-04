@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway # This name must match the resource in the 'base'
+  namespace: dt-bank
+spec:
+  replicas: 3 # Increase replicas for high availability in production
+  template:
+    spec:
+      containers:
+        - name: gateway
+          resources: # Increase resource requests and limits for production load
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: account-service
+  namespace: dt-bank
+spec:
+  replicas: 2 # Scale up the account service
+  template:
+    spec:
+      containers:
+        - name: account-service
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "768Mi"
+            limits:
+              cpu: "500m"
+              memory: "1.5Gi"
+          env:
+            - name: LOG_LEVEL_ROOT # Set a production-specific environment variable
+              value: "INFO"
