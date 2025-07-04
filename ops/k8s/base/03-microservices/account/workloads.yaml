@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: account-service
-          image: ghcr.io/ajharry69/account-service:current
+          image: ghcr.io/ajharry69/account-service:1.0.3
           ports:
             - containerPort: 8080
           env:

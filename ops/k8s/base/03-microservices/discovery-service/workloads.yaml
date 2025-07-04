@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: discovery-service
-          image: ghcr.io/ajharry69/discovery-service:current # This image tag will be updated by your CD pipeline
+          image: ghcr.io/ajharry69/discovery-service:1.0.3 # This image tag will be updated by your CD pipeline
           ports:
             - containerPort: 8080
           env:

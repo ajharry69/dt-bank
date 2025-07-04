@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: card-service
-          image: ghcr.io/ajharry69/card-service:current
+          image: ghcr.io/ajharry69/card-service:1.0.3
           ports:
             - containerPort: 8080
           env:

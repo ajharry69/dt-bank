@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: customer-service
-          image: ghcr.io/ajharry69/customer-service:current
+          image: ghcr.io/ajharry69/customer-service:1.0.3
           ports:
             - containerPort: 8080
           env:
