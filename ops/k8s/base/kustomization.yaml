@@ -7,19 +7,10 @@ resources:
   - backing-services/rabbitmq.yaml
   - backing-services/redis.yaml
   - backing-services/zipkin.yaml
-  # Microservices (and their databases)
-  - microservices/config-server/workloads.yaml
-  - microservices/config-server/services.yaml
-  - microservices/discovery-service/workloads.yaml
-  - microservices/discovery-service/services.yaml
-  - microservices/gateway/workloads.yaml
-  - microservices/gateway/services.yaml
-  - microservices/account/workloads.yaml
-  - microservices/account/services.yaml
-  - microservices/account/databases.yaml
-  - microservices/card/workloads.yaml
-  - microservices/card/services.yaml
-  - microservices/card/databases.yaml
-  - microservices/customer/workloads.yaml
-  - microservices/customer/services.yaml
-  - microservices/customer/databases.yaml
+  # Microservices
+  - microservices/config-server/
+  - microservices/discovery-service/
+  - microservices/account/
+  - microservices/card/
+  - microservices/customer/
+  - microservices/gateway/
