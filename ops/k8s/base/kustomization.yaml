@@ -2,24 +2,24 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - 00-namespace.yaml
+  - namespace.yaml
   # Backing Services
-  - 01-backing-services/rabbitmq.yaml
-  - 01-backing-services/redis.yaml
-  - 01-backing-services/zipkin.yaml
+  - backing-services/rabbitmq.yaml
+  - backing-services/redis.yaml
+  - backing-services/zipkin.yaml
   # Microservices (and their databases)
-  - 03-microservices/config-server/workloads.yaml
-  - 03-microservices/config-server/services.yaml
-  - 03-microservices/discovery-service/workloads.yaml
-  - 03-microservices/discovery-service/services.yaml
-  - 03-microservices/01-gateway/workloads.yaml
-  - 03-microservices/01-gateway/services.yaml
-  - 03-microservices/account/workloads.yaml
-  - 03-microservices/account/services.yaml
-  - 03-microservices/account/databases.yaml
-  - 03-microservices/card/workloads.yaml
-  - 03-microservices/card/services.yaml
-  - 03-microservices/card/databases.yaml
-  - 03-microservices/customer/workloads.yaml
-  - 03-microservices/customer/services.yaml
-  - 03-microservices/customer/databases.yaml
+  - microservices/config-server/workloads.yaml
+  - microservices/config-server/services.yaml
+  - microservices/discovery-service/workloads.yaml
+  - microservices/discovery-service/services.yaml
+  - microservices/gateway/workloads.yaml
+  - microservices/gateway/services.yaml
+  - microservices/account/workloads.yaml
+  - microservices/account/services.yaml
+  - microservices/account/databases.yaml
+  - microservices/card/workloads.yaml
+  - microservices/card/services.yaml
+  - microservices/card/databases.yaml
+  - microservices/customer/workloads.yaml
+  - microservices/customer/services.yaml
+  - microservices/customer/databases.yaml

@@ -8,6 +8,7 @@ spec:
     app: gateway
   type: LoadBalancer # Exposes the service externally via a cloud load balancer
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80 # The port on the load balancer
       targetPort: 8080 # The port on the pods
