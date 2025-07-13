@@ -10,11 +10,6 @@ on:
 env:
   GITHUB_ACTOR: ${{github.actor}}
   GITHUB_TOKEN: ${{secrets.GHCR_TOKEN}}
-  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  GCP_REGION: "us-central1"
-  ARTIFACT_REGISTRY: "dt-bank-images" # The name of the repo created by Terraform
-  GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-  GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
 jobs:
   build-and-test:
