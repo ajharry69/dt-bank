@@ -13,9 +13,9 @@ resource "google_compute_subnetwork" "subnet" {
 
 # --- GKE Cluster (using Autopilot for simplicity and cost-effectiveness) ---
 resource "google_container_cluster" "primary" {
-  name     = "dt-bank-cluster"
-  location = var.gcp_region
-  network  = google_compute_network.vpc_network.self_link
+  name       = "dt-bank-cluster"
+  location   = var.gcp_region
+  network    = google_compute_network.vpc_network.self_link
   subnetwork = google_compute_subnetwork.subnet.self_link
 
   # Autopilot automatically manages nodes and scaling.
@@ -47,7 +47,7 @@ resource "google_project_iam_member" "artifact_writer" {
 # Allow SA to manage the GKE cluster
 resource "google_project_iam_member" "gke_developer" {
   project = var.gcp_project_id
-  role = "roles/container.developer" # Provides necessary access to deploy to GKE
+  role    = "roles/container.developer" # Provides necessary access to deploy to GKE
   member  = "serviceAccount:${google_service_account.github_actions_sa.email}"
 }
 
