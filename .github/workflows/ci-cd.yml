@@ -20,15 +20,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "24"
-          cache: "gradle"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: ./.github/actions/setup-gradle
 
       - name: Build
         run: make build
@@ -155,18 +148,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "24"
-          cache: "gradle"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Gradle and Docker
+        uses: ./.github/actions/setup-gradle-and-docker
 
       - name: Build and push ${{ matrix.version }} Docker images
         env:
@@ -184,18 +167,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "24"
-          cache: "gradle"
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Gradle and Docker
+        uses: ./.github/actions/setup-gradle-and-docker
 
       - name: Build and push Docker images
         run: make build-and-push-images
