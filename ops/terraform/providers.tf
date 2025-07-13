@@ -1,6 +1,14 @@
 terraform {
   required_version = ">= 1.0"
 
+  cloud {
+    organization = "xently"
+
+    workspaces {
+      name = "dt-bank"
+    }
+  }
+
   required_providers {
     google = {
       source  = "hashicorp/google"
