@@ -17,7 +17,7 @@ extra["datafakerVersion"] = "2.4.3"
 
 allprojects {
     group = "com.github.ajharry69"
-    version = "1.0.2"
+    version = "1.0.3"
 
     repositories {
         mavenCentral()

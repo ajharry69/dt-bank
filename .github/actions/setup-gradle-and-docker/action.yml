@@ -1,0 +1,11 @@
+name: "Setup Build and Push Docker Images Environment"
+description: "Checks out code, and sets up Java, Gradle, and Docker."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Gradle
+      uses: ./.github/actions/setup-gradle
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
