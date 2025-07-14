@@ -163,9 +163,18 @@ jobs:
       - build-and-test
       - terraform
     runs-on: ubuntu-24.04
+    permissions:
+      contents: "read"
+      id-token: "write" # Required for OIDC authentication to GCP
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Setup Gradle and Docker
         uses: ./.github/actions/setup-gradle-and-docker
@@ -179,7 +188,16 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
-          cd ${{ env.TF_WORKING_DIR }}
           terraform init -input=false
           terraform apply -auto-approve -input=false
+
+      - name: Get GKE cluster credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: "dt-bank-cluster"
+          location: "africa-south1"
+
+      - name: Deploy to GKE using Kustomize
+        run: kubectl apply -k ./ops/k8s/overlays/production
