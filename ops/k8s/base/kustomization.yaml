@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   # Backing Services
+  - backing-services/keycloak/
   - backing-services/rabbitmq.yaml
   - backing-services/redis.yaml
   - backing-services/zipkin.yaml

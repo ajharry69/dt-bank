@@ -6,3 +6,5 @@ resources:
   - ../../base
   # Add the development-specific secrets
   - secrets.yaml
+patches:
+  - path: patch-resources.yaml

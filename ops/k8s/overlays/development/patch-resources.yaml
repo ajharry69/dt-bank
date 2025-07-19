@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: dt-bank
+spec:
+  template:
+    spec:
+      containers:
+        - name: keycloak
+          args: ["start-dev", "--import-realm"]
+          env:
+            - name: KC_HOSTNAME
+              value: "https://keycloak.dt-bank.svc.cluster.local:8443"
