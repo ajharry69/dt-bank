@@ -9,4 +9,4 @@ spec:
   type: ClusterIP
   ports:
     - port: 8080
-      targetPort: discovery-svc
+      targetPort: discovery-http

@@ -23,7 +23,8 @@ spec:
         - name: card-service
           image: ghcr.io/ajharry69/card-service:1.0.3
           ports:
-            - containerPort: 8080
+            - name: card-svc-http
+              containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"

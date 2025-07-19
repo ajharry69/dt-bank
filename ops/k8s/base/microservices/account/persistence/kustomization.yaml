@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - workloads.yaml
   - services.yaml
-  - persistence/
+  - volumes.yaml

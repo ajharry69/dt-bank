@@ -23,7 +23,8 @@ spec:
         - name: customer-service
           image: ghcr.io/ajharry69/customer-service:1.0.3
           ports:
-            - containerPort: 8080
+            - name: customer-svc-http
+              containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"

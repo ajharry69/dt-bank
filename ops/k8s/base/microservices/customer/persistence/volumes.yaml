@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: customer-db-pvc
+  namespace: dt-bank
+spec:
+  accessModes: [ "ReadWriteOnce" ] # This volume can be mounted by a single node
+  resources:
+    requests:
+      storage: 1Gi # Adjust size as needed

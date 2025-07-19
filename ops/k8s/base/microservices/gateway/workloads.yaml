@@ -23,7 +23,8 @@ spec:
         - name: gateway
           image: ghcr.io/ajharry69/gateway:1.0.3 # This image tag will be updated by your CD pipeline
           ports:
-            - containerPort: 8080
+            - name: gateway-http
+              containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "kubernetes"

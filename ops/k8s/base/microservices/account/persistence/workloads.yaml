@@ -1,34 +1,24 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: customer-db-pvc
-  namespace: dt-bank
-spec:
-  accessModes: [ "ReadWriteOnce" ] # This volume can be mounted by a single node
-  resources:
-    requests:
-      storage: 1Gi # Adjust size as needed
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customer-service-database
+  name: account-service-database
   namespace: dt-bank
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: customer-service-database
+      app: account-service-database
   template:
     metadata:
       labels:
-        app: customer-service-database
+        app: account-service-database
     spec:
       containers:
         - name: postgres
           image: postgres:17-alpine
           ports:
-            - containerPort: 5432
+            - name: account-svc-db
+              containerPort: 5432
           env:
             - name: POSTGRES_DB
               value: "test"
@@ -47,17 +37,4 @@ spec:
       volumes:
         - name: db-storage
           persistentVolumeClaim:
-            claimName: customer-db-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: customer-service-database
-  namespace: dt-bank
-spec:
-  selector:
-    app: customer-service-database
-  type: ClusterIP
-  ports:
-    - port: 5432
-      targetPort: 5432
+            claimName: account-db-pvc
