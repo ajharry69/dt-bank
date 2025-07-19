@@ -1,4 +1,9 @@
 services:
+  keycloak-database: &db
+    extends:
+      file: compose.ide.yaml
+      service: keycloak-database
+
   keycloak:
     depends_on: &fb-depends-on
       fluent-bit:
@@ -11,9 +16,9 @@ services:
       file: compose.ide.yaml
       service: keycloak
     environment:
-      KC_HOSTNAME: host.docker.internal
-      KC_HOSTNAME_PORT: 8180
-      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME: https://host.docker.internal:8443
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/server.crt.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/server.key.pem
 
   rabbitmq:
     depends_on: *fb-depends-on
@@ -113,17 +118,7 @@ services:
     volumes:
       - ./ops/observability/tempo/tempo.yml:/etc/tempo.yml:ro
 
-  account-service-database: &db
-    image: postgres:17-alpine
-    healthcheck:
-      test: [ "CMD-SHELL", "psql test test --command=\"SELECT 1;\"" ]
-      interval: 5s
-      timeout: 15s
-      retries: 5
-    environment:
-      POSTGRES_DB: "test"
-      POSTGRES_USER: "test"
-      POSTGRES_PASSWORD: "test"
+  account-service-database: *db
 
   card-service-database: *db
 
