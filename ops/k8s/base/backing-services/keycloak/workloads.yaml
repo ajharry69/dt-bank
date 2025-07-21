@@ -1,12 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+# Use a stateful setup to ensure that for a rolling update Pods are restarted with a rolling strategy one-by-one.
+# This prevents losing in-memory information stored redundantly in two Pods.
+kind: StatefulSet
 metadata:
   name: keycloak
   namespace: dt-bank
   labels:
     app: keycloak
 spec:
-  replicas: 1
+  serviceName: keycloak-discovery
+  # Run with one replica to save resources, or with two replicas to allow for rolling updates for configuration changes
+  replicas: 2
   selector:
     matchLabels:
       app: keycloak
@@ -37,6 +41,20 @@ spec:
               value: "true"
             - name: KC_PROXY
               value: "edge"
+            - name: KC_CACHE
+              value: "ispn"
+            # Use the Kubernetes configuration for distributed caches which is based on DNS
+            - name: KC_CACHE_STACK
+              value: "kubernetes"
+            # Passing the Pod's IP primary address to the JGroups clustering as this is required in IPv6 only setups
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            # Instruct JGroups which DNS hostname to use to discover other Keycloak nodes
+            # Needs to be unique for each Keycloak cluster
+            - name: JAVA_OPTS_APPEND
+              value: '-Djgroups.dns.query="keycloak-discovery" -Djgroups.bind.address=$(POD_IP)'
             - name: KC_DB_URL
               value: "jdbc:postgresql://keycloak-database.dt-bank.svc.cluster.local:5432/authentication"
             - name: KC_DB_USERNAME
@@ -50,20 +68,31 @@ spec:
           volumeMounts:
             - name: keycloak-storage
               mountPath: /opt/keycloak/data
+          startupProbe:
+            httpGet:
+              path: /health/started
+              port: 9000
+            periodSeconds: 1
+            failureThreshold: 600
           readinessProbe:
             httpGet:
               path: /health/ready
               port: 9000
-            initialDelaySeconds: 60
             periodSeconds: 10
-            timeoutSeconds: 5
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health/live
               port: 9000
-            initialDelaySeconds: 90
-            periodSeconds: 20
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2000Mi
+            requests:
+              cpu: 500m
+              memory: 1700Mi
       volumes:
         - name: keycloak-storage
           persistentVolumeClaim:

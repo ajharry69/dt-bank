@@ -23,7 +23,7 @@ spec:
         - name: account-service
           image: ghcr.io/ajharry69/account-service:1.0.3
           ports:
-            - name: account-svc-http
+            - name: account-svc
               containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE

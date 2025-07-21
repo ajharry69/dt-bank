@@ -11,4 +11,4 @@ spec:
     - name: http
       protocol: TCP
       port: 80 # The port on the load balancer
-      targetPort: gateway-http # The port on the pods
+      targetPort: gateway # The port on the pods

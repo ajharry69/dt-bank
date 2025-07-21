@@ -23,7 +23,7 @@ spec:
         - name: config-server
           image: ghcr.io/ajharry69/config-server:1.0.3 # This image tag will be updated by your CD pipeline
           ports:
-            - name: config-server-http
+            - name: config-server
               containerPort: 8080
           env:
             - name: SERVER_PORT

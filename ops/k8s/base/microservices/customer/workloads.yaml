@@ -23,7 +23,7 @@ spec:
         - name: customer-service
           image: ghcr.io/ajharry69/customer-service:1.0.3
           ports:
-            - name: customer-svc-http
+            - name: customer-svc
               containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
