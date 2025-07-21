@@ -1,5 +1,6 @@
 # Ref: https://www.keycloak.org/server/containers#_writing_your_optimized_keycloak_containerfile
-FROM quay.io/keycloak/keycloak:26.2 AS builder
+ARG TAG=26.2
+FROM quay.io/keycloak/keycloak:$TAG AS builder
 
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
@@ -12,7 +13,7 @@ COPY server.crt.pem server.key.pem /opt/keycloak/conf/
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:26.2
+FROM quay.io/keycloak/keycloak:$TAG
 LABEL org.opencontainers.image.source="https://github.com/ajharry69/dt-bank"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
