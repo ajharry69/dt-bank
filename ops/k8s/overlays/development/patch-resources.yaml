@@ -10,6 +10,10 @@ spec:
         - name: keycloak
           args: ["start-dev", "--import-realm"]
           env:
+            # In this explorative setup, no strict hostname is set.
+            # For production environments, set a hostname for a secure setup.
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
             - name: KC_HOSTNAME
               value: "https://keycloak.dt-bank.svc.cluster.local:8443"
             - name: KC_HTTPS_CERTIFICATE_FILE
