@@ -1,4 +1,24 @@
 apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: keycloak
+  namespace: dt-bank
+spec:
+  # Run with one replica to save resources, or with two replicas to allow for rolling updates for configuration changes
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: keycloak
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2000Mi
+            requests:
+              cpu: 500m
+              memory: 1700Mi
+---
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gateway # This name must match the resource in the 'base'
