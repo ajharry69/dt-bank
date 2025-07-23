@@ -31,6 +31,18 @@ management:
 server:
   forward-headers-strategy: framework
 spring:
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        # Start with a 1.5-second delay
+        initial-interval: 1500
+        # Increase the delay by 20% after each failed attempt
+        multiplier: 1.2
+        # Cap the delay at 5 seconds between retries
+        max-interval: 5000
+        # Try up to 20 times before giving up. (20 retries * ~3s avg = ~1 min)
+        max-attempts: 20
   docker:
     compose:
       file:

@@ -12,13 +12,7 @@
       "serviceAccountsEnabled": true,
       "standardFlowEnabled": true,
       "protocol": "openid-connect",
-      "defaultClientScopes": [
-        "openid",
-        "email",
-        "profile",
-        "roles",
-        "web-origins"
-      ],
+      "defaultClientScopes": [],
       "optionalClientScopes": [
         "account.create",
         "account.read",
