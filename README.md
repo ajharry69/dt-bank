@@ -1,5 +1,9 @@
 # DT Bank - Microservices Platform
 
+[![CI/CD Pipeline](https://github.com/ajharry69/dt-bank/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/ajharry69/dt-bank/actions/workflows/ci-cd.yml)
+[![CodeQL](https://github.com/ajharry69/dt-bank/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ajharry69/dt-bank/actions/workflows/github-code-scanning/codeql)
+[![Dependabot Updates](https://github.com/ajharry69/dt-bank/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ajharry69/dt-bank/actions/workflows/dependabot/dependabot-updates)
+
 This project implements a simplified banking platform using a microservices' architecture.
 It includes services for managing customers, accounts, and cards, along with common cloud
 infrastructure patterns like service discovery, configuration management, API gateway, and
