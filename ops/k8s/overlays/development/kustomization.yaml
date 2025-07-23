@@ -4,7 +4,4 @@ kind: Kustomization
 # Inherit all resources from the base
 resources:
   - ../../base
-  # Add the development-specific secrets
   - secrets.yaml
-patches:
-  - path: patch-resources.yaml

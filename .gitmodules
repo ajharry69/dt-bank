@@ -1,0 +1,3 @@
+[submodule "ops/keycloak"]
+	path = ops/keycloak
+	url = git@github.com:ajharry69/keycloak.git
