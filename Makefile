@@ -38,8 +38,10 @@ build: ## Build project.
 test: ## Run tests for all modules.
 	./gradlew test --no-daemon --exclude-task :gateway:test --continue --build-cache --info
 
-build-images: ## Build Docker images.
+images: ## Build Docker images.
 	./gradlew bootBuildImage --no-daemon --continue --build-cache --parallel
+
+build-images: images ## Build Docker images.
 
 build-and-push-images: ## Build and push Docker images.
 	./gradlew bootBuildImage --no-daemon --continue --build-cache --parallel --publishImage
