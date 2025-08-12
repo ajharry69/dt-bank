@@ -10,11 +10,12 @@ spec:
       storage: 2Gi
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rabbitmq
   namespace: dt-bank
 spec:
+  serviceName: rabbitmq
   replicas: 1
   selector:
     matchLabels:

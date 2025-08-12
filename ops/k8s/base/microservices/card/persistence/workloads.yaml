@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: card-service-database
   namespace: dt-bank
 spec:
+  serviceName: card-service-database
   replicas: 1
   selector:
     matchLabels:
