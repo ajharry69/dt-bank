@@ -23,4 +23,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "https://keycloak.keycloak.svc.cluster.local:8443/realms/dt-bank"
+          issuer-uri: "http://keycloak.keycloak.svc.cluster.local:8080/realms/dt-bank"
