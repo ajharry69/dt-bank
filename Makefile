@@ -1,4 +1,4 @@
-.PHONY: help destroy update-hosts keycloak docker compose build test build-images build-and-push-images k8s-dev k8s-staging k8s-production k8s
+.PHONY: help destroy update-hosts keycloak docker compose build test build-images build-and-push-images k8s k8s-staging k8s-production
 
 help: ## Display this help message.
 	@echo "Please use \`make <target>\` where <target> is one of:"
@@ -44,10 +44,10 @@ build-images: ## Build Docker images.
 build-and-push-images: ## Build and push Docker images.
 	./gradlew bootBuildImage --no-daemon --continue --build-cache --parallel --publishImage
 
-k8s-dev: ## Start kubernetes development cluster.
+k8s: ## Start kubernetes development cluster.
 	kubectl apply -k ./ops/k8s/overlays/development/
 
-k8s-dev-delete: ## Delete kubernetes development cluster.
+k8s-delete: ## Delete kubernetes development cluster.
 	kubectl delete -k ./ops/k8s/overlays/development/
 
 k8s-staging: ## Start kubernetes staging cluster.
@@ -61,7 +61,3 @@ k8s-production: ## Start kubernetes production cluster.
 
 k8s-production-delete: ## Delete kubernetes production cluster.
 	kubectl delete -k ./ops/k8s/overlays/production/
-
-k8s: k8s-production ## Start kubernetes production cluster.
-
-k8s-delete: k8s-production-delete ## Start kubernetes production cluster.
