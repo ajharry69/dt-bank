@@ -22,7 +22,6 @@ services:
       KC_DB_URL: "jdbc:postgresql://keycloak-database:5432/test"
       KC_DB_USERNAME: "test"
       KC_DB_PASSWORD: "test"
-      KC_FEATURES: "preview,docker"
       KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
       KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"
     volumes:
