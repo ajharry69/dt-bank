@@ -35,7 +35,11 @@ spec:
               command: [ "pg_isready", "-U", "test", "-d", "test" ]
             initialDelaySeconds: 10
             periodSeconds: 5
-      volumes:
-        - name: db-storage
-          persistentVolumeClaim:
-            claimName: card-db-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

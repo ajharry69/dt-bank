@@ -1,14 +1,3 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: rabbitmq-pvc
-  namespace: dt-bank
-spec:
-  accessModes: [ "ReadWriteOnce" ]
-  resources:
-    requests:
-      storage: 2Gi
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -39,10 +28,14 @@ spec:
           volumeMounts:
             - name: mq-storage
               mountPath: /var/lib/rabbitmq
-      volumes:
-        - name: mq-storage
-          persistentVolumeClaim:
-            claimName: rabbitmq-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: mq-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 2Gi
 ---
 apiVersion: v1
 kind: Service
