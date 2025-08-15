@@ -21,12 +21,13 @@ services:
       # This allows Keycloak to be accessed via HTTP, which is common
       # inside a cluster where a separate Ingress handles TLS termination.
       KC_HTTP_ENABLED: "true"
-        # In this explorative setup, no strict hostname is set.
+      # In this explorative setup, no strict hostname is set.
       # For production environments, set a hostname for a secure setup.
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME: "http://host.docker.internal:8180"
-      #KC_HTTPS_CERTIFICATE_FILE: "/opt/keycloak/conf/server.crt.pem"
-      #KC_HTTPS_CERTIFICATE_KEY_FILE: "/opt/keycloak/conf/server.key.pem"
+      KC_HOSTNAME_ADMIN: "http://host.docker.internal:8180"
+      KC_HTTPS_CERTIFICATE_FILE: "/opt/keycloak/conf/server.crt.pem"
+      KC_HTTPS_CERTIFICATE_KEY_FILE: "/opt/keycloak/conf/server.key.pem"
 
   rabbitmq:
     depends_on: *fb-depends-on
@@ -91,6 +92,8 @@ services:
       - ./ops/observability/grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - loki
+      - prometheus
+      - tempo
 
   prometheus:
     image: prom/prometheus:v3.4.1
