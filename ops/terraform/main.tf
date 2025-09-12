@@ -20,6 +20,7 @@ resource "google_container_cluster" "primary" {
 
   # Autopilot automatically manages nodes and scaling.
   enable_autopilot = true
+  deletion_protection = false
 }
 
 # --- Google Artifact Registry for Docker Images ---
