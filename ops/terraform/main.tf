@@ -19,7 +19,7 @@ resource "google_container_cluster" "primary" {
   subnetwork = google_compute_subnetwork.subnet.self_link
 
   # Autopilot automatically manages nodes and scaling.
-  enable_autopilot = true
+  enable_autopilot    = true
   deletion_protection = false
 }
 
