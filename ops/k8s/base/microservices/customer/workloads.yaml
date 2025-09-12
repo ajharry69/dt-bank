@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service
+  namespace: dt-bank
+  labels:
+    app: customer-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service
+  template:
+    metadata:
+      labels:
+        app: customer-service
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+        - name: customer-service
+          image: ghcr.io/ajharry69/customer-service:1.0.3
+          ports:
+            - name: customer-svc
+              containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes"
+            - name: CONFIG_SERVER_URL
+              value: "http://config-server.dt-bank.svc.cluster.local:8080"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 15

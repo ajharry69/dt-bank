@@ -1,0 +1,25 @@
+name: Google Cloud Setup (OIDC)
+
+description: "Authenticate to GCP via WIF and install gcloud"
+
+author: "ajharry69/dt-bank maintainers"
+
+inputs:
+  workload_identity_provider:
+    description: "Full resource name of the Workload Identity Provider (projects/NUMBER/locations/global/workloadIdentityPools/POOL/providers/PROVIDER)"
+    required: true
+  service_account:
+    description: "Email of the Google Service Account to impersonate via WIF"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Authenticate to Google Cloud (Workload Identity Federation)
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: ${{ inputs.workload_identity_provider }}
+        service_account: ${{ inputs.service_account }}
+
+    - name: Setup gcloud SDK
+      uses: google-github-actions/setup-gcloud@v2

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: account-service
+  namespace: dt-bank
+spec:
+  selector:
+    app: account-service
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: account-svc

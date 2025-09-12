@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: customer-service-database
+  namespace: dt-bank
+spec:
+  serviceName: customer-service-database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service-database
+  template:
+    metadata:
+      labels:
+        app: customer-service-database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - name: customer-svc-db
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "test"
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_USER } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_PASSWORD } }
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+          readinessProbe: # K8s equivalent of healthcheck
+            exec:
+              command: [ "pg_isready", "-U", "test", "-d", "test" ]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

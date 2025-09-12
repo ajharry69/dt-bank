@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: card-service-database
+  namespace: dt-bank
+spec:
+  serviceName: card-service-database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: card-service-database
+  template:
+    metadata:
+      labels:
+        app: card-service-database
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - name: card-svc-db
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "test"
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_USER } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_PASSWORD } }
+          volumeMounts:
+            - name: db-storage
+              mountPath: /var/lib/postgresql/data
+          readinessProbe: # K8s equivalent of healthcheck
+            exec:
+              command: [ "pg_isready", "-U", "test", "-d", "test" ]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: db-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

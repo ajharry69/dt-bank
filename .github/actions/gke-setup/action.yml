@@ -1,0 +1,45 @@
+name: GKE Setup
+
+description: "Authenticate to GCP via WIF, install gcloud, fetch GKE credentials, and install Helm"
+
+author: "ajharry69/dt-bank maintainers"
+
+inputs:
+  workload_identity_provider:
+    description: "Full resource name of the Workload Identity Provider (projects/NUMBER/locations/global/workloadIdentityPools/POOL/providers/PROVIDER)"
+    required: true
+  service_account:
+    description: "Email of the Google Service Account to impersonate via WIF"
+    required: true
+  cluster_name:
+    description: "GKE cluster name"
+    required: false
+    default: "dt-bank-cluster"
+  location:
+    description: "GKE cluster location (region or zone)"
+    required: false
+    default: "africa-south1"
+  helm_version:
+    description: "Helm version to install"
+    required: false
+    default: "v3.15.3"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup GCP auth (OIDC)
+      uses: ./.github/actions/gcloud-setup
+      with:
+        workload_identity_provider: ${{ inputs.workload_identity_provider }}
+        service_account: ${{ inputs.service_account }}
+
+    - name: Get GKE Credentials
+      uses: google-github-actions/get-gke-credentials@v2
+      with:
+        cluster_name: ${{ inputs.cluster_name }}
+        location: ${{ inputs.location }}
+
+    - name: Setup Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: ${{ inputs.helm_version }}

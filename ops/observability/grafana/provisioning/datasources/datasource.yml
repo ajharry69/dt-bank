@@ -21,7 +21,7 @@ datasources:
     uid: tempo-dt-bank
     access: proxy
     orgId: 1
-    url: http://tempo:3100
+    url: http://tempo:3200
     basicAuth: false
     isDefault: false
     version: 1

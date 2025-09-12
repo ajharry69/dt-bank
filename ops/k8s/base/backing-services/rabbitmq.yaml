@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: dt-bank
+spec:
+  serviceName: rabbitmq
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: "rabbitmq:4.1-alpine"
+          ports:
+            - name: rabbitmq-amqp
+              containerPort: 5672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom: { secretKeyRef: { name: rabbitmq-credentials, key: RABBITMQ_DEFAULT_USER } }
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom: { secretKeyRef: { name: rabbitmq-credentials, key: RABBITMQ_DEFAULT_PASS } }
+          volumeMounts:
+            - name: mq-storage
+              mountPath: /var/lib/rabbitmq
+  volumeClaimTemplates:
+    - metadata:
+        name: mq-storage
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: dt-bank
+spec:
+  selector:
+    app: rabbitmq
+  type: ClusterIP
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: rabbitmq-amqp
