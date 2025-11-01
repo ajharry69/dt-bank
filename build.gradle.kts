@@ -4,11 +4,11 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     java
     jacoco
-    id("org.springframework.boot") version "3.4.5" apply false
+    id("org.springframework.boot") version "3.5.7" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
 }
 
-extra["springCloudVersion"] = "2024.0.1"
+extra["springCloudVersion"] = "2025.0.0"
 extra["mapstructVersion"] = "1.6.3"
 extra["springDocVersion"] = "2.7.0"
 extra["keycloakVersion"] = "3.7.0"
@@ -32,7 +32,7 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(24)
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
 
